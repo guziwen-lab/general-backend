@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.supermap.modules.log.dao.GlobalDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.supermap.modules.log.entity.GlobalEntity" id="globalMap">
+        <result property="id" column="id"/>
+        <result property="className" column="class_name"/>
+        <result property="methodName" column="method_name"/>
+        <result property="param" column="param"/>
+        <result property="result" column="result"/>
+        <result property="take" column="take"/>
+        <result property="errorMsg" column="error_msg"/>
+        <result property="exception" column="exception"/>
+        <result property="requestUser" column="request_user"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.supermap.modules.sys.dao.PermissionDao">
+
+    <resultMap type="com.supermap.modules.sys.entity.PermissionEntity" id="permissionMap">
+        <result property="permissionId" column="permission_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="name" column="name"/>
+        <result property="permsKey" column="perms_key"/>
+        <result property="path" column="path"/>
+        <result property="level" column="level"/>
+        <result property="sort" column="sort"/>
+        <result property="url" column="url"/>
+        <result property="type" column="type"/>
+        <result property="icon" column="icon"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="getByRoleId" resultMap="permissionMap">
+        select p.*
+        from sys_permission p
+                 left join sys_role_permission_relation r on p.permission_id = r.permission_id
+        where r.role_id = #{roleId}
+    </select>
+
+    <select id="getPermsKeysByUserId" resultType="java.lang.String">
+        select distinct p.perms_key
+        from sys_permission p
+                 left join sys_role_permission_relation rp on p.permission_id = rp.permission_id
+                 left join sys_user_role_relation ur on ur.role_id = rp.role_id
+        where ur.user_id = #{userId}
+    </select>
+</mapper>

@@ -1,0 +1,29 @@
+package com.supermap.modules.sys.service;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.supermap.modules.sys.dto.UserDTO;
+import com.supermap.modules.sys.dto.UserSaveDTO;
+import com.supermap.modules.sys.entity.UserEntity;
+
+/**
+ * 用户表
+ *
+ * @author gzw
+ */
+public interface UserService extends IService<UserEntity> {
+
+    Page<UserEntity> queryPage(UserDTO dto);
+
+    UserEntity getByUsername(String username);
+
+    void saveDTO(UserSaveDTO dto);
+
+    void updateLoginUser(UserSaveDTO dto);
+
+    void reset(String username);
+
+    void resetAll();
+
+}
+
