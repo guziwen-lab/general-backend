@@ -51,6 +51,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/new-ygdz-test/v3/**", "anon");
         // 登录
         filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/captcha", "anon");
 
         // 其余接口通过redis过滤器
         filterChainDefinitionMap.put("/**", CUSTOM_FILTER);

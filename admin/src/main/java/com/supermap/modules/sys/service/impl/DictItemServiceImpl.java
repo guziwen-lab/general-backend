@@ -3,7 +3,6 @@ package com.supermap.modules.sys.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.supermap.common.util.BeanUtils;
-import com.supermap.common.util.StringUtils;
 import com.supermap.modules.sys.entity.DictEntity;
 import com.supermap.modules.sys.service.DictService;
 import org.springframework.stereotype.Service;
@@ -64,8 +63,9 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemDao, DictItemEntity
     }
 
     @Override
-    public List<DictItemEntity> tree(DictItemDTO dto) {
-        List<DictItemEntity> list = flatList(dto);
+    public List<DictItemEntity> tree(Long dictId) {
+        List<DictItemEntity> list = list(new LambdaQueryWrapper<>(DictItemEntity.class)
+                .eq(DictItemEntity::getDictId, dictId));
 
         List<DictItemEntity> collect = list.stream()
                 .filter(dict -> dict.getParentId() == null || dict.getParentId().equals(0L))
@@ -81,23 +81,6 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemDao, DictItemEntity
                 .toList();
         dict.getChildren().addAll(children);
         children.forEach(d -> setChildren(d, list));
-    }
-
-    private List<DictItemEntity> flatList(DictItemDTO dto) {
-        LambdaQueryWrapper<DictItemEntity> wrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isNotEmpty(dto.getName())) {
-            DictEntity dictEntity = dictService.getByName(dto.getName());
-            if (dictEntity == null)
-                throw new RuntimeException("字典不存在");
-            wrapper.eq(DictItemEntity::getDictId, dictEntity.getDictId());
-        } else {
-            wrapper.eq(dto.getDictId() != null, DictItemEntity::getDictId, dto.getDictId());
-        }
-        wrapper.ge(dto.getStartTime() != null, DictItemEntity::getCreateTime, dto.getStartTime());
-        wrapper.le(dto.getEndTime() != null, DictItemEntity::getCreateTime, dto.getEndTime());
-
-        wrapper.orderByAsc(DictItemEntity::getSort);
-        return list(wrapper);
     }
 
 }

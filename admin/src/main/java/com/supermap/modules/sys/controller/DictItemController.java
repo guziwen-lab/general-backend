@@ -1,11 +1,11 @@
 package com.supermap.modules.sys.controller;
 
 import java.util.Arrays;
-import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,20 +25,10 @@ import com.supermap.modules.sys.service.DictItemService;
 @Tag(name = "字典项表")
 @RestController
 @RequestMapping("/sys/dictitem")
+@AllArgsConstructor
 public class DictItemController {
 
     private final DictItemService dictItemService;
-
-    public DictItemController(DictItemService dictItemService) {
-        this.dictItemService = dictItemService;
-    }
-
-    @Operation(summary = "树形列表")
-    @PostMapping("/tree")
-    public R<List<DictItemEntity>> tree(@RequestBody @Validated DictItemDTO dto) {
-        List<DictItemEntity> page = dictItemService.tree(dto);
-        return R.ok(page);
-    }
 
     @Operation(summary = "分页查询")
     @PostMapping("/page")

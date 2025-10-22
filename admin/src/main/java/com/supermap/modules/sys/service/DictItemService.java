@@ -21,7 +21,7 @@ public interface DictItemService extends IService<DictItemEntity> {
 
     void updateDTOById(DictItemSaveDTO dto);
 
-    List<DictItemEntity> tree(DictItemDTO dto);
+    List<DictItemEntity> tree(Long dictId);
 
 }
 

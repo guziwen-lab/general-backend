@@ -1,8 +1,10 @@
 package com.supermap.modules.sys.controller;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.supermap.modules.sys.entity.DictItemEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +32,13 @@ public class DictController {
 
     public DictController(DictService dictService) {
         this.dictService = dictService;
+    }
+
+    @Operation(summary = "树形列表")
+    @PostMapping("/tree")
+    public R<List<DictItemEntity>> tree(@RequestBody @Validated DictDTO dto) {
+        List<DictItemEntity> page = dictService.tree(dto);
+        return R.ok(page);
     }
 
     @Operation(summary = "分页查询")

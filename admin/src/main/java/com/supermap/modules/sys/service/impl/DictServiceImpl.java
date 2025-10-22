@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.supermap.common.util.BeanUtils;
 import com.supermap.common.util.StringUtils;
+import com.supermap.modules.sys.entity.DictItemEntity;
+import com.supermap.modules.sys.service.DictItemService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -14,9 +17,13 @@ import com.supermap.modules.sys.dto.DictDTO;
 import com.supermap.modules.sys.dto.DictSaveDTO;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Service("dictService")
+@AllArgsConstructor
 public class DictServiceImpl extends ServiceImpl<DictDao, DictEntity> implements DictService {
+
+    private final DictItemService dictItemService;
 
     @Override
     public Page<DictEntity> queryPage(DictDTO dto) {
@@ -63,6 +70,23 @@ public class DictServiceImpl extends ServiceImpl<DictDao, DictEntity> implements
     @Override
     public DictEntity getByName(String name) {
         return getOne(new LambdaQueryWrapper<DictEntity>().eq(DictEntity::getName, name));
+    }
+
+    @Override
+    public List<DictItemEntity> tree(DictDTO dto) {
+        if (dto.getDictId() != null) {
+            DictEntity dictEntity = getById(dto.getDictId());
+            if (dictEntity == null)
+                throw new RuntimeException("字典不存在");
+            return dictItemService.tree(dto.getDictId());
+        } else if (StringUtils.isNotEmpty(dto.getName())) {
+            DictEntity dictEntity = getByName(dto.getName());
+            if (dictEntity == null)
+                throw new RuntimeException("字典不存在");
+            return dictItemService.tree(dictEntity.getDictId());
+        } else {
+            throw new RuntimeException("字典不存在");
+        }
     }
 
     private void checkName(String name) {
