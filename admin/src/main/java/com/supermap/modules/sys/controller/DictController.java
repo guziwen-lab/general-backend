@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.supermap.modules.sys.entity.DictItemEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,13 +27,10 @@ import com.supermap.modules.sys.service.DictService;
 @Tag(name = "字典表")
 @RestController
 @RequestMapping("/sys/dict")
+@AllArgsConstructor
 public class DictController {
 
     private final DictService dictService;
-
-    public DictController(DictService dictService) {
-        this.dictService = dictService;
-    }
 
     @Operation(summary = "树形列表")
     @PostMapping("/tree")
