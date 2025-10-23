@@ -43,6 +43,7 @@ public class UserController {
 
     @Operation(summary = "信息")
     @GetMapping("/info/{userId}")
+    @RequiresPermissions("sys:user:select")
     public R<UserEntity> info(@PathVariable("userId") Long userId) {
         UserEntity user = userService.getById(userId);
         return R.ok(user);

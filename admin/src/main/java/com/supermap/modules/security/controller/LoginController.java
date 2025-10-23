@@ -13,10 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -70,6 +67,13 @@ public class LoginController {
         LoginUser loginUser = LoginUserContextHandler.getLoginUser();
         loginService.logout(loginUser.getToken());
         return R.ok();
+    }
+
+    @Operation(summary = "登录用户信息")
+    @GetMapping("/info")
+    public R<LoginUser> getLoginUserinfo() {
+        LoginUser loginUser = LoginUserContextHandler.getLoginUser();
+        return R.ok(loginUser);
     }
 
 }

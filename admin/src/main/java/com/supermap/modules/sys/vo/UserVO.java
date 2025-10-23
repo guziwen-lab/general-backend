@@ -37,10 +37,10 @@ public class UserVO {
 	@Schema(title = "更新时间")
 	private Timestamp updateTime;
 
-	@Schema(title = "行政区划代码")
-	private String xzqdm;
-
 	@Schema(title = "昵称")
 	private String nickname;
+
+    @Schema(title = "头像")
+    private Long avatar;
 
 }
