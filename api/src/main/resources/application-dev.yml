@@ -1,7 +1,5 @@
 server:
   port: 8080
-  servlet:
-    context-path: /api
 spring:
   datasource:
     url: jdbc:postgresql://service.990304.xyz:5432/common_backend?useUnicode=true&characterEncoding=UTF-8
@@ -52,6 +50,11 @@ thread:
   keep-alive-time: 10000
 sm3:
   key: 123
+login:
+  retry:
+    max-retry-count: 5
+file:
+  base-path: /Users/guziwen/Java/temp/网络查控/file
 logging:
   level:
     com.supermap: debug

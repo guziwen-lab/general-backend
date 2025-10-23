@@ -47,9 +47,11 @@ thread:
   keep-alive-time: 10000
 sm3:
   key: 123
-password:
-  error:
-    times: 5
+login:
+  retry:
+    max-retry-count: 5
+file:
+  base-path: /Users/guziwen/Java/temp/网络查控/file
 logging:
   level:
     com.supermap: debug

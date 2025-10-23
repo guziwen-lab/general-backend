@@ -2,6 +2,7 @@ package com.supermap.modules.security.controller;
 
 import com.supermap.common.enumeration.BizCodeEnum;
 import com.supermap.common.pojo.R;
+import com.supermap.common.util.StringUtils;
 import com.supermap.modules.security.service.CaptchaService;
 import com.supermap.modules.security.service.LoginService;
 import com.supermap.modules.sys.dto.UserLoginDTO;
@@ -41,6 +42,13 @@ public class LoginController {
     @Operation(summary = "登录")
     @PostMapping(value = "/login")
     public R<String> login(UserLoginDTO user, HttpServletResponse response) {
+        if (StringUtils.isEmpty(user.getUsername()) ||
+                StringUtils.isEmpty(user.getPassword()) ||
+                StringUtils.isEmpty(user.getCaptcha()) ||
+                StringUtils.isEmpty(user.getUuid())) {
+            return R.error(BizCodeEnum.VALID_PARAM_EXCEPTION);
+        }
+
         boolean flag = captchaService.validate(user.getUuid(), user.getCaptcha());
         if (!flag)
             return R.error(BizCodeEnum.CAPTCHA_ERROR);

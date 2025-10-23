@@ -6,6 +6,7 @@ import com.supermap.shiro.encoder.PasswordEncoder;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,8 @@ public class RetryLimitCredentialsMatcher extends DefaultCredentialsMatcher {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    private static final int MAX_RETRY_COUNT = 5;
+    @Value("${login.retry.max-retry-count:5}")
+    private int maxRetryCount = 5;
 
     private static final long RETRY_EXPIRE_SECONDS = 1800;
 
@@ -34,7 +36,7 @@ public class RetryLimitCredentialsMatcher extends DefaultCredentialsMatcher {
 
         String retryStr = redisTemplate.opsForValue().get(key);
         int retryCount = retryStr == null ? 0 : Integer.parseInt(retryStr);
-        if (retryCount >= MAX_RETRY_COUNT)
+        if (retryCount >= maxRetryCount)
             throw new ExcessiveAttemptsException("账号已锁定，请30分钟后再试");
 
         boolean matches = super.doCredentialsMatch(token, info);

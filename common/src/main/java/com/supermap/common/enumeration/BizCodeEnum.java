@@ -15,7 +15,7 @@ import lombok.Getter;
 @Getter
 public enum BizCodeEnum {
     UNKNOWN_EXCEPTION(10000, "系统未知异常"),
-    VALID_EXCEPTION(10001, "请求参数校验失败"),
+    VALID_PARAM_EXCEPTION(10001, "请求参数校验失败"),
     AUTHENTICATION_FAILED(10002, "认证失败"),
     PERMISSIONS_DENIAL(10003, "权限不足"),
     TO_MANY_REQUEST(10004, "请求流量过大"),

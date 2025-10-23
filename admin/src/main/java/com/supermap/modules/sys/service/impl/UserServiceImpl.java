@@ -75,7 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
         UserEntity update = new UserEntity();
         update.setUserId(user.getUserId());
-        update.setPassword(passwordEncoder.encode(username + "."));
+        update.setPassword("123456");
         update.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         updateById(update);
     }
@@ -89,7 +89,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         for (UserEntity userEntity : list) {
             UserEntity update = new UserEntity();
             update.setUserId(userEntity.getUserId());
-            update.setPassword(passwordEncoder.encode(userEntity.getUsername() + "."));
+            update.setPassword("123456");
             update.setUpdateTime(new Timestamp(System.currentTimeMillis()));
             updateList.add(update);
         }

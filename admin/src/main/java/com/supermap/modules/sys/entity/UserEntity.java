@@ -28,13 +28,16 @@ public class UserEntity {
 	@Schema(title = "密码")
 	private String password;
 
+    @Schema(title = "昵称")
+    private String nickname;
+
+    @Schema(title = "头像")
+    private Long avatar;
+
 	@Schema(title = "创建时间")
 	private Timestamp createTime;
 
 	@Schema(title = "更新时间")
 	private Timestamp updateTime;
-
-	@Schema(title = "昵称")
-	private String nickname;
 
 }

@@ -15,7 +15,7 @@ import java.util.Map;
  * @author gzw
  */
 @Slf4j
-@RestControllerAdvice(basePackages = {"com.supermap.module"})
+@RestControllerAdvice(basePackages = {"com.supermap.modules"})
 public class GlobalExceptionControllerAdvice {
 
     /**
@@ -31,7 +31,7 @@ public class GlobalExceptionControllerAdvice {
         result.getFieldErrors().forEach((item) -> errorMap.put(item.getField(), item.getDefaultMessage()));
         if (log.isDebugEnabled())
             log.error("Validation failed for argument{}", errorMap);
-        return R.error(BizCodeEnum.VALID_EXCEPTION, errorMap);
+        return R.error(BizCodeEnum.VALID_PARAM_EXCEPTION, errorMap);
     }
 
     /**

@@ -6,7 +6,9 @@ import com.supermap.common.util.BeanUtils;
 import com.supermap.common.util.StringUtils;
 import com.supermap.modules.sys.entity.DictItemEntity;
 import com.supermap.modules.sys.service.DictItemService;
+import jakarta.annotation.Resource;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -20,10 +22,10 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Service("dictService")
-@AllArgsConstructor
 public class DictServiceImpl extends ServiceImpl<DictDao, DictEntity> implements DictService {
 
-    private final DictItemService dictItemService;
+    @Resource
+    private DictItemService dictItemService;
 
     @Override
     public Page<DictEntity> queryPage(DictDTO dto) {

@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.supermap.common.util.BeanUtils;
 import com.supermap.modules.sys.entity.DictEntity;
 import com.supermap.modules.sys.service.DictService;
+import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -20,11 +23,9 @@ import java.util.List;
 @Service("dictItemService")
 public class DictItemServiceImpl extends ServiceImpl<DictItemDao, DictItemEntity> implements DictItemService {
 
-    private final DictService dictService;
-
-    public DictItemServiceImpl(DictService dictService) {
-        this.dictService = dictService;
-    }
+    @Resource
+    @Lazy
+    private DictService dictService;
 
     @Override
     public Page<DictItemEntity> queryPage(DictItemDTO dto) {
