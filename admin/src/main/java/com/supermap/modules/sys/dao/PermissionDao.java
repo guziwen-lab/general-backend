@@ -18,6 +18,6 @@ public interface PermissionDao extends BaseMapper<PermissionEntity> {
 
     List<PermissionEntity> getByRoleId(@Param("roleId") Long roleId);
 
-    Set<String> getPermsKeysByUserId(@Param("userId") Long userId);
+    Set<PermissionEntity> getByUserId(@Param("userId") Long userId);
 
 }

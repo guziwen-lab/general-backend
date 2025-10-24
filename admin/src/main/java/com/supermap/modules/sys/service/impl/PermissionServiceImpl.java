@@ -29,12 +29,18 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionDao, Permission
     }
 
     @Override
-    public Set<String> getPermsKeysByUserId(Long userId) {
-        return baseMapper.getPermsKeysByUserId(userId);
+    public Set<PermissionEntity> getByUserId(Long userId) {
+        return baseMapper.getByUserId(userId);
     }
 
     @Override
     public Long saveDTO(PermissionSaveDTO dto) {
+        PermissionEntity exists = getOne(new LambdaQueryWrapper<PermissionEntity>()
+                .eq(PermissionEntity::getPermsKey, dto.getPermsKey()));
+        if (exists != null) {
+            throw new RuntimeException("权限key已存在");
+        }
+
         PermissionEntity permissionEntity = new PermissionEntity();
         BeanUtils.copyProperties(dto, permissionEntity);
         save(permissionEntity);

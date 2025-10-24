@@ -20,33 +20,12 @@ import java.util.Set;
 @Data
 public class LoginUser extends UserVO {
 
-    // 权限信息的集合
     private Set<String> permissions = new HashSet<>();
 
-    // 角色信息的集合
     private Set<String> roles = new HashSet<>();
 
-    public LoginUser(@Nullable Set<String> permissions, @Nullable Set<String> roles) {
-        if (permissions != null)
-            this.permissions.addAll(permissions);
-        if (roles != null)
-            this.roles.addAll(roles);
-    }
+    private Set<String> routes = new HashSet<>();
 
-    public LoginUser(UserEntity userEntity, @Nullable Set<String> permissions, @Nullable Set<String> roles) {
-        BeanUtils.copyProperties(userEntity, this);
-        if (permissions != null)
-            this.permissions.addAll(permissions);
-        if (roles != null)
-            this.roles.addAll(roles);
-    }
-
-    public void addPermission(String... permission) {
-        this.permissions.addAll(Arrays.asList(permission));
-    }
-
-    public void addRoles(String... roles) {
-        this.roles.addAll(Arrays.asList(roles));
-    }
+    private Set<String> buttons = new HashSet<>();
 
 }

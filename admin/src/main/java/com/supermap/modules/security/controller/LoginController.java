@@ -32,7 +32,6 @@ public class LoginController {
     @GetMapping("captcha")
     @Operation(summary = "验证码")
     public void captcha(@RequestParam String uuid, HttpServletResponse response) throws IOException {
-        //生成验证码
         captchaService.create(uuid, response);
     }
 

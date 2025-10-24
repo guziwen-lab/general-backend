@@ -1,7 +1,9 @@
 package com.supermap.modules.sys.dto;
 
+import com.supermap.common.valid.group.Add;
 import com.supermap.common.valid.group.Update;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -23,15 +25,18 @@ public class PermissionSaveDTO {
 	@Schema(title = "父权限/菜单id")
 	private Long parentId;
 
+    @NotBlank(groups = Add.class)
 	@Schema(title = "权限/菜单名称")
 	private String name;
 
+    @NotBlank(groups = Add.class)
 	@Schema(title = "权限key")
 	private String permsKey;
 
 	@Schema(title = "菜单路径 (树id的路径，主要用于存放从根节点到当前树的父节点的路径)")
 	private String path;
 
+    @NotBlank(groups = Add.class)
 	@Schema(title = "菜单层级")
 	private Integer level;
 
@@ -41,6 +46,7 @@ public class PermissionSaveDTO {
 	@Schema(title = "菜单url")
 	private String url;
 
+    @NotBlank(groups = Add.class)
 	@Schema(title = "菜单类型 (0: 目录; 1: 页面; 2: 按钮)")
 	private Integer type;
 

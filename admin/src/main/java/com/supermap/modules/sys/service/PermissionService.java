@@ -20,7 +20,7 @@ public interface PermissionService extends IService<PermissionEntity> {
 
     List<PermissionEntity> getByRoleId(Long roleId);
 
-    Set<String> getPermsKeysByUserId(Long userId);
+    Set<PermissionEntity> getByUserId(Long userId);
 
     Long saveDTO(PermissionSaveDTO dto);
 

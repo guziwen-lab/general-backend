@@ -25,8 +25,8 @@
         where r.role_id = #{roleId}
     </select>
 
-    <select id="getPermsKeysByUserId" resultType="java.lang.String">
-        select distinct p.perms_key
+    <select id="getByUserId" resultMap="permissionMap">
+        select distinct p.*
         from sys_permission p
                  left join sys_role_permission_relation rp on p.permission_id = rp.permission_id
                  left join sys_user_role_relation ur on ur.role_id = rp.role_id
