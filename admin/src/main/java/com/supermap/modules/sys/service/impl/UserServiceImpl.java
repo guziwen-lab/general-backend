@@ -14,6 +14,7 @@ import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,9 +50,17 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         }
 
         UserEntity userEntity = new UserEntity();
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        userEntity.setCreateTime(now);
+        userEntity.setUpdateTime(now);
         BeanUtils.copyProperties(dto, userEntity);
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
-        save(userEntity);
+
+        try {
+            save(userEntity);
+        } catch (DataIntegrityViolationException ex) {
+            throw new IllegalArgumentException("用户名已存在");
+        }
     }
 
     @Override
