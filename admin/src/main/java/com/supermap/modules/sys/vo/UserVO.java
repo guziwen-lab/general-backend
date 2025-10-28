@@ -6,8 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.sql.Timestamp;
-
 /**
  * 用户表VO
  *
