@@ -8,6 +8,7 @@ import com.supermap.modules.sys.dto.UserDTO;
 import com.supermap.modules.sys.dto.UserSaveDTO;
 import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.service.UserService;
+import com.supermap.modules.sys.vo.UserVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,8 +37,8 @@ public class UserController {
     @RequiresPermissions("sys:user:select")
     @Operation(summary = "分页查询用户")
     @PostMapping("/list")
-    public R<Page<UserEntity>> list(@RequestBody UserDTO dto) {
-        Page<UserEntity> page = userService.queryPage(dto);
+    public R<Page<UserVO>> list(@RequestBody UserDTO dto) {
+        Page<UserVO> page = userService.queryPage(dto);
         return R.ok(page);
     }
 

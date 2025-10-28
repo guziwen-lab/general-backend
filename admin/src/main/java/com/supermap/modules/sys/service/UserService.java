@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.supermap.modules.sys.dto.UserDTO;
 import com.supermap.modules.sys.dto.UserSaveDTO;
 import com.supermap.modules.sys.entity.UserEntity;
+import com.supermap.modules.sys.vo.UserVO;
 
 /**
  * 用户表
@@ -13,7 +14,7 @@ import com.supermap.modules.sys.entity.UserEntity;
  */
 public interface UserService extends IService<UserEntity> {
 
-    Page<UserEntity> queryPage(UserDTO dto);
+    Page<UserVO> queryPage(UserDTO dto);
 
     UserEntity getByUsername(String username);
 

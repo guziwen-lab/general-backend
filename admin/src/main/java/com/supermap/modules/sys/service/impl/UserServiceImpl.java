@@ -10,6 +10,7 @@ import com.supermap.modules.sys.dto.UserDTO;
 import com.supermap.modules.sys.dto.UserSaveDTO;
 import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.service.UserService;
+import com.supermap.modules.sys.vo.UserVO;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
 import com.supermap.shiro.encoder.PasswordEncoder;
@@ -29,12 +30,20 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Page<UserEntity> queryPage(UserDTO dto) {
+    public Page<UserVO> queryPage(UserDTO dto) {
         LambdaQueryWrapper<UserEntity> wrapper = new LambdaQueryWrapper<>(UserEntity.class);
         wrapper.like(StringUtils.isNotEmpty(dto.getUsername()), UserEntity::getUsername, dto.getUsername());
         wrapper.ge(dto.getStartTime() != null, UserEntity::getCreateTime, dto.getStartTime());
         wrapper.le(dto.getEndTime() != null, UserEntity::getCreateTime, dto.getEndTime());
-        return page(dto.page(), wrapper);
+        wrapper.orderByAsc(UserEntity::getCreateTime);
+
+        Page<UserEntity> page = page(dto.page(), wrapper);
+        List<UserEntity> records = page.getRecords();
+        List<UserVO> userVOList = BeanUtils.copyToList(records, UserVO.class);
+
+        Page<UserVO> pageVO = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+        pageVO.setRecords(userVOList);
+        return pageVO;
     }
 
     @Override

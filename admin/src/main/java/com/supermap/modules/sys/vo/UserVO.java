@@ -1,19 +1,22 @@
 package com.supermap.modules.sys.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.supermap.modules.sys.entity.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.sql.Timestamp;
 
 /**
- * 用户表
+ * 用户表VO
  *
  * @author gzw
  */
-@Schema(title = "用户表")
+@EqualsAndHashCode(callSuper = true)
+@Schema(title = "用户表VO")
 @Data
-public class UserVO {
+public class UserVO extends UserEntity {
 
 	/**
 	 * token
@@ -21,26 +24,8 @@ public class UserVO {
 	@Schema(title = "token")
 	private String token;
 
-	@Schema(title = "用户id")
-	private Long userId;
-
-	@Schema(title = "用户名")
-	private String username;
-
 	@JsonIgnore
 	@Schema(title = "密码")
 	private String password;
-
-	@Schema(title = "创建时间")
-	private Timestamp createTime;
-
-	@Schema(title = "更新时间")
-	private Timestamp updateTime;
-
-	@Schema(title = "昵称")
-	private String nickname;
-
-    @Schema(title = "头像")
-    private Long avatar;
 
 }
