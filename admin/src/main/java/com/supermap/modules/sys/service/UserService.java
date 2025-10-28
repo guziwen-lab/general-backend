@@ -20,7 +20,7 @@ public interface UserService extends IService<UserEntity> {
 
     void saveDTO(UserSaveDTO dto);
 
-    void updateLoginUser(UserSaveDTO dto);
+    void updateDTO(UserSaveDTO dto);
 
     void reset(String username);
 

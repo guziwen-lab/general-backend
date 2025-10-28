@@ -29,4 +29,7 @@ public class UserSaveDTO {
 	@Schema(title = "昵称")
 	private String nickname;
 
+    @Schema(title = "头像")
+    private Long avatar;
+
 }

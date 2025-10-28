@@ -2,11 +2,15 @@ package com.supermap.modules.sys.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.supermap.common.pojo.R;
+import com.supermap.common.valid.group.Add;
+import com.supermap.common.valid.group.Update;
 import com.supermap.modules.sys.dto.RoleDTO;
+import com.supermap.modules.sys.dto.RoleSaveDTO;
 import com.supermap.modules.sys.entity.RoleEntity;
 import com.supermap.modules.sys.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -37,28 +41,28 @@ public class RoleController {
     @Operation(summary = "信息")
     @GetMapping("/info/{roleId}")
     public R<RoleEntity> info(@PathVariable("roleId") Long roleId) {
-            RoleEntity role = roleService.getById(roleId);
+        RoleEntity role = roleService.getById(roleId);
         return R.ok(role);
     }
 
     @Operation(summary = "保存")
     @PostMapping("/save")
-    public R<Void> save(@RequestBody RoleEntity role) {
-            roleService.save(role);
+    public R<Void> save(@RequestBody @Validated(Add.class) RoleSaveDTO dto) {
+        roleService.saveDTO(dto);
         return R.ok();
     }
 
     @Operation(summary = "修改")
     @PutMapping("/update")
-    public R<Void> update(@RequestBody RoleEntity role) {
-            roleService.updateById(role);
+    public R<Void> update(@RequestBody @Validated(Update.class) RoleSaveDTO dto) {
+        roleService.updateDTO(dto);
         return R.ok();
     }
 
     @Operation(summary = "删除")
     @PostMapping("/delete")
     public R<Void> delete(@RequestBody Long[] roleIds) {
-            roleService.removeByIds(Arrays.asList(roleIds));
+        roleService.removeByIds(Arrays.asList(roleIds));
         return R.ok();
     }
 

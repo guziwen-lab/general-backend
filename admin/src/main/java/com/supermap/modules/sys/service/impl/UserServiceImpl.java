@@ -31,19 +31,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Override
     public Page<UserVO> queryPage(UserDTO dto) {
-        LambdaQueryWrapper<UserEntity> wrapper = new LambdaQueryWrapper<>(UserEntity.class);
-        wrapper.like(StringUtils.isNotEmpty(dto.getUsername()), UserEntity::getUsername, dto.getUsername());
-        wrapper.ge(dto.getStartTime() != null, UserEntity::getCreateTime, dto.getStartTime());
-        wrapper.le(dto.getEndTime() != null, UserEntity::getCreateTime, dto.getEndTime());
-        wrapper.orderByAsc(UserEntity::getCreateTime);
-
-        Page<UserEntity> page = page(dto.page(), wrapper);
-        List<UserEntity> records = page.getRecords();
-        List<UserVO> userVOList = BeanUtils.copyToList(records, UserVO.class);
-
-        Page<UserVO> pageVO = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
-        pageVO.setRecords(userVOList);
-        return pageVO;
+        return baseMapper.page(dto.page(), dto);
     }
 
     @Override
@@ -73,11 +61,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public void updateLoginUser(UserSaveDTO dto) {
+    public void updateDTO(UserSaveDTO dto) {
         UserEntity userEntity = new UserEntity();
-
-        LoginUser loginUser = LoginUserContextHandler.getLoginUser();
-        userEntity.setUserId(loginUser.getUserId());
+        BeanUtils.copyProperties(dto, userEntity);
         if (StringUtils.isNotBlank(dto.getPassword())) {
             userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
         }

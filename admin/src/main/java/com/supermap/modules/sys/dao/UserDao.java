@@ -1,8 +1,12 @@
 package com.supermap.modules.sys.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.supermap.modules.sys.dto.UserDTO;
 import com.supermap.modules.sys.entity.UserEntity;
+import com.supermap.modules.sys.vo.UserVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户表
@@ -11,5 +15,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface UserDao extends BaseMapper<UserEntity> {
+
+    Page<UserVO> page(Page<Object> page, @Param("dto") UserDTO dto);
 
 }

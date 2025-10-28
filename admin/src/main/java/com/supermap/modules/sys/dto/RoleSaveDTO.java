@@ -1,9 +1,11 @@
 package com.supermap.modules.sys.dto;
 
-import com.supermap.common.pojo.PageParam;
+import com.supermap.common.valid.group.Add;
+import com.supermap.common.valid.group.Update;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
@@ -12,15 +14,16 @@ import java.util.Date;
  *
  * @author gzw
  */
-@EqualsAndHashCode(callSuper = true)
 @Schema(title = "角色表")
 @Data
-public class RoleDTO extends PageParam {
+public class RoleSaveDTO {
 
     @Schema(title = "角色id")
+    @NotNull(groups = Update.class)
     private Long roleId;
 
     @Schema(title = "角色名称")
+    @NotBlank(groups = Add.class)
     private String roleName;
 
     @Schema(title = "备注")

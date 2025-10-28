@@ -11,6 +11,7 @@ import com.supermap.modules.sys.service.UserService;
 import com.supermap.modules.sys.vo.UserVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.validation.annotation.Validated;
@@ -26,13 +27,10 @@ import java.util.Arrays;
 @Tag(name = "用户表")
 @RestController
 @RequestMapping("/sys/user")
+@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @RequiresPermissions("sys:user:select")
     @Operation(summary = "分页查询用户")
@@ -58,10 +56,10 @@ public class UserController {
         return R.ok();
     }
 
-    @Operation(summary = "修改登录用户的信息")
+    @Operation(summary = "修改")
     @PutMapping("/update")
     public R<Void> update(@RequestBody @Validated(Update.class) UserSaveDTO dto) {
-        userService.updateLoginUser(dto);
+        userService.updateDTO(dto);
         return R.ok();
     }
 

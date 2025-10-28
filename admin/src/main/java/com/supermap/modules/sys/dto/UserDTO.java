@@ -23,14 +23,8 @@ public class UserDTO extends PageParam {
 	@Schema(title = "结束时间")
 	private Timestamp endTime;
 
-	@Schema(title = "用户id")
-	private Long userId;
-
-	@Schema(title = "用户名")
-	private String username;
-
-	@Schema(title = "密码")
-	private String password;
+    @Schema(title = "关键词")
+    private String keyword;
 
 	@Schema(title = "昵称")
 	private String nickname;
