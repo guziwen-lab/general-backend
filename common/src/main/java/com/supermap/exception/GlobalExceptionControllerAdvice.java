@@ -3,6 +3,7 @@ package com.supermap.exception;
 import com.supermap.common.enumeration.BizCodeEnum;
 import com.supermap.common.pojo.R;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,6 +33,17 @@ public class GlobalExceptionControllerAdvice {
         if (log.isDebugEnabled())
             log.error("Validation failed for argument{}", errorMap);
         return R.error(BizCodeEnum.VALID_PARAM_EXCEPTION, errorMap);
+    }
+
+    /**
+     * 处理权限不足异常
+     *
+     * @param e {@link UnauthorizedException UnauthorizedException}
+     * @return R
+     */
+    @ExceptionHandler(UnauthorizedException.class)
+    public R<Void> handleUnauthorizedException(UnauthorizedException e) {
+        return R.error(BizCodeEnum.PERMISSIONS_DENIAL.getCode(), "您没有操作此功能的权限，请联系管理员开通权限");
     }
 
     /**
