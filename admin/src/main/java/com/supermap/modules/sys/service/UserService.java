@@ -6,6 +6,7 @@ import com.supermap.modules.sys.dto.UserDTO;
 import com.supermap.modules.sys.dto.UserSaveDTO;
 import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.vo.UserVO;
+import com.supermap.shiro.LoginUser;
 
 /**
  * 用户表
@@ -25,6 +26,8 @@ public interface UserService extends IService<UserEntity> {
     void reset(String username);
 
     void resetAll();
+
+    LoginUser getLoginUserPermsInfo(Long userId);
 
 }
 

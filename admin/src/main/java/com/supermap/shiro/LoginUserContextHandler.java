@@ -1,5 +1,6 @@
 package com.supermap.shiro;
 
+import com.supermap.shiro.util.RedisTokenUtils;
 import org.apache.shiro.SecurityUtils;
 
 /**
@@ -15,4 +16,7 @@ public class LoginUserContextHandler {
         SecurityUtils.getSubject().logout();
     }
 
+    public static void refreshLoginUser(LoginUser user) {
+        RedisTokenUtils.refreshToken(user);
+    }
 }

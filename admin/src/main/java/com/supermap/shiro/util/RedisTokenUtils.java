@@ -37,6 +37,14 @@ public class RedisTokenUtils {
     }
 
     /**
+     * 更新token
+     */
+    public static void refreshToken(LoginUser user) {
+        BoundValueOperations<String, String> ops = redisTemplate.boundValueOps(RedisTokenUtils.getKey(user.getToken()));
+        ops.set(JSON.toJSONString(user), AuthenticationConstant.DEFAULT_EXPIRE_SECONDS, TimeUnit.SECONDS);
+    }
+
+    /**
      * 根据token获取用户信息
      */
     public static LoginUser getLoginUser(String token) {

@@ -3,12 +3,15 @@ package com.supermap.modules.sys.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.supermap.common.constant.MenuType;
 import com.supermap.common.util.BeanUtils;
 import com.supermap.common.util.StringUtils;
 import com.supermap.modules.sys.dao.UserDao;
 import com.supermap.modules.sys.dto.UserDTO;
 import com.supermap.modules.sys.dto.UserSaveDTO;
+import com.supermap.modules.sys.entity.PermissionEntity;
 import com.supermap.modules.sys.entity.UserEntity;
+import com.supermap.modules.sys.service.PermissionService;
 import com.supermap.modules.sys.service.UserService;
 import com.supermap.modules.sys.vo.UserVO;
 import com.supermap.shiro.LoginUser;
@@ -22,12 +25,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service("userService")
 @AllArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements UserService {
 
     private final PasswordEncoder passwordEncoder;
+
+    private final PermissionService permissionService;
+
+    private final RoleServiceImpl roleService;
 
     @Override
     public Page<UserVO> queryPage(UserDTO dto) {
@@ -69,6 +79,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         }
         userEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         updateById(userEntity);
+
+        // 更新登录缓存
+        LoginUser loginUser = LoginUserContextHandler.getLoginUser();
+        userEntity = getById(dto.getUserId());
+        LoginUser loginUserPermsInfo = getLoginUserPermsInfo(userEntity.getUserId());
+        BeanUtils.copyProperties(userEntity, loginUserPermsInfo);
+        loginUserPermsInfo.setToken(loginUser.getToken());
+        LoginUserContextHandler.refreshLoginUser(loginUserPermsInfo);
     }
 
     @Override
@@ -99,6 +117,29 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         }
 
         updateBatchById(updateList);
+    }
+
+    @Override
+    public LoginUser getLoginUserPermsInfo(Long userId) {
+        LoginUser loginUser = new LoginUser();
+
+        Set<String> roleNames = roleService.getRoleNamesByUserId(userId);
+        loginUser.setRoles(roleNames);
+
+        Set<PermissionEntity> permissionEntities = permissionService.getByUserId(userId);
+        loginUser.setPermissions(permissionEntities.stream()
+                .map(PermissionEntity::getPermsKey)
+                .collect(Collectors.toSet()));
+        loginUser.setRoutes(permissionEntities.stream()
+                .filter(permissionEntity -> Objects.equals(permissionEntity.getType(), MenuType.PAGE))
+                .map(PermissionEntity::getPath)
+                .collect(Collectors.toSet()));
+        loginUser.setButtons(permissionEntities.stream()
+                .filter(permissionEntity -> Objects.equals(permissionEntity.getType(), MenuType.BUTTON))
+                .map(PermissionEntity::getPermsKey)
+                .collect(Collectors.toSet()));
+
+        return loginUser;
     }
 
 }
