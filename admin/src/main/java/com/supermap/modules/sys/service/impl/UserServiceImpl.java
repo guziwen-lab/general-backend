@@ -78,7 +78,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
         userEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        updateById(userEntity);
+        try {
+            updateById(userEntity);
+        } catch (DataIntegrityViolationException ex) {
+            throw new IllegalArgumentException("用户名已存在");
+        }
 
         // 更新登录缓存
         LoginUser loginUser = LoginUserContextHandler.getLoginUser();
