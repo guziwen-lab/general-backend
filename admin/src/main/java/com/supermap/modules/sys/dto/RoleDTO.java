@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  * 角色表

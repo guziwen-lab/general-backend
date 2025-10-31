@@ -11,7 +11,6 @@ import com.supermap.modules.sys.dto.RoleSaveDTO;
 import com.supermap.modules.sys.entity.PermissionEntity;
 import com.supermap.modules.sys.entity.RoleEntity;
 import com.supermap.modules.sys.entity.RolePermissionRelationEntity;
-import com.supermap.modules.sys.entity.UserRoleRelationEntity;
 import com.supermap.modules.sys.service.RolePermissionRelationService;
 import com.supermap.modules.sys.service.RoleService;
 import lombok.AllArgsConstructor;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;

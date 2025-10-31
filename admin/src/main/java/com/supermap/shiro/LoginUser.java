@@ -1,14 +1,10 @@
 package com.supermap.shiro;
 
-import com.supermap.common.util.BeanUtils;
-import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.vo.UserVO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
