@@ -5,6 +5,7 @@ import com.supermap.modules.sys.entity.RoleEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,6 +16,8 @@ import java.util.Set;
 @Mapper
 public interface RoleDao extends BaseMapper<RoleEntity> {
 
-    Set<String> getRolesByUserId(@Param("userId") Long userId);
+    Set<String> getRoleNamesByUserId(@Param("userId") Long userId);
+
+    List<RoleEntity> getRoleByUserId(@Param("userId") Long userId);
 
 }

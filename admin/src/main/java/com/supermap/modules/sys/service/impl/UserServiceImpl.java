@@ -55,6 +55,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         return getOne(new LambdaQueryWrapper<>(UserEntity.class).eq(UserEntity::getUsername, username));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveDTO(UserSaveDTO dto) {
         UserEntity username = getByUsername(dto.getUsername());
@@ -74,6 +75,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         } catch (DataIntegrityViolationException ex) {
             throw new IllegalArgumentException("用户名已存在");
         }
+
+        saveRoleByUserId(userEntity.getUserId(), dto.getRoleIds());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -93,28 +96,32 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             throw new IllegalArgumentException("用户名已存在");
         }
 
-        List<Long> roleIds = dto.getRoleIds();
-        if (CollectionUtils.isNotEmpty(roleIds)) {
-            userRoleRelationService.removeByUserId(dto.getUserId());
-
-            long count = roleService.count(new LambdaQueryWrapper<RoleEntity>()
-                    .in(RoleEntity::getRoleId, roleIds));
-            if (count != roleIds.size())
-                throw new IllegalArgumentException("角色不存在");
-
-            List<UserRoleRelationEntity> relationEntities = roleIds.stream()
-                    .map(item -> {
-                        UserRoleRelationEntity userRoleRelationEntity = new UserRoleRelationEntity();
-                        userRoleRelationEntity.setUserId(userEntity.getUserId());
-                        userRoleRelationEntity.setRoleId(item);
-                        return userRoleRelationEntity;
-                    }).toList();
-            userRoleRelationService.saveBatch(relationEntities);
-        }
+        saveRoleByUserId(dto.getUserId(), dto.getRoleIds());
 
         // 更新登录缓存
         if (Objects.equals(LoginUserContextHandler.getLoginUser().getUserId(), userEntity.getUserId()))
             refreshLoginUser(dto.getUserId());
+    }
+
+    private void saveRoleByUserId(Long userId, List<Long> roleIds) {
+        if (CollectionUtils.isEmpty(roleIds))
+            return;
+
+        userRoleRelationService.removeByUserId(userId);
+
+        long count = roleService.count(new LambdaQueryWrapper<RoleEntity>()
+                .in(RoleEntity::getRoleId, roleIds));
+        if (count != roleIds.size())
+            throw new IllegalArgumentException("角色不存在");
+
+        List<UserRoleRelationEntity> relationEntities = roleIds.stream()
+                .map(item -> {
+                    UserRoleRelationEntity userRoleRelationEntity = new UserRoleRelationEntity();
+                    userRoleRelationEntity.setUserId(userId);
+                    userRoleRelationEntity.setRoleId(item);
+                    return userRoleRelationEntity;
+                }).toList();
+        userRoleRelationService.saveBatch(relationEntities);
     }
 
     private void refreshLoginUser(Long userId) {
@@ -174,6 +181,18 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 .filter(permissionEntity -> Objects.equals(permissionEntity.getType(), MenuType.BUTTON))
                 .map(PermissionEntity::getPermsKey)
                 .collect(Collectors.toSet()));
+    }
+
+    @Override
+    public UserVO getUserVO(Long userId) {
+        UserVO userVO = new UserVO();
+        UserEntity userEntity = getById(userId);
+        BeanUtils.copyProperties(userEntity, userVO);
+
+        List<RoleEntity> roles = roleService.getByUserId(userId);
+        userVO.setRoleEntities(roles);
+
+        return userVO;
     }
 
 }

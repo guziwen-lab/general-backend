@@ -26,5 +26,7 @@ public interface RoleService extends IService<RoleEntity> {
 
     List<RoleEntity> all();
 
+    List<RoleEntity> getByUserId(Long userId);
+
 }
 

@@ -27,7 +27,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
 
     @Override
     public Set<String> getRoleNamesByUserId(Long userId) {
-        return baseMapper.getRolesByUserId(userId);
+        return baseMapper.getRoleNamesByUserId(userId);
     }
 
     @Override
@@ -62,6 +62,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
     public List<RoleEntity> all() {
         return list(new LambdaQueryWrapper<>(RoleEntity.class)
                 .orderByDesc(RoleEntity::getCreateTime));
+    }
+
+    @Override
+    public List<RoleEntity> getByUserId(Long userId) {
+        return baseMapper.getRoleByUserId(userId);
     }
 
     private RoleEntity getByRoleName(String roleName) {

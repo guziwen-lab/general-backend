@@ -1,10 +1,13 @@
 package com.supermap.modules.sys.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.supermap.modules.sys.entity.RoleEntity;
 import com.supermap.modules.sys.entity.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 /**
  * 用户表VO
@@ -28,5 +31,8 @@ public class UserVO extends UserEntity {
 
     @Schema(title = "角色名称")
     private String roleNames;
+
+    @Schema(title = "角色")
+    private List<RoleEntity> roleEntities;
 
 }

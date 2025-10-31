@@ -6,7 +6,6 @@ import com.supermap.common.valid.group.Add;
 import com.supermap.common.valid.group.Update;
 import com.supermap.modules.sys.dto.UserDTO;
 import com.supermap.modules.sys.dto.UserSaveDTO;
-import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.service.UserService;
 import com.supermap.modules.sys.vo.UserVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,8 +42,8 @@ public class UserController {
     @Operation(summary = "信息")
     @GetMapping("/info/{userId}")
     @RequiresPermissions("sys:user:select")
-    public R<UserEntity> info(@PathVariable("userId") Long userId) {
-        UserEntity user = userService.getById(userId);
+    public R<UserVO> info(@PathVariable("userId") Long userId) {
+        UserVO user = userService.getUserVO(userId);
         return R.ok(user);
     }
 
