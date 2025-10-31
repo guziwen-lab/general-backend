@@ -33,8 +33,7 @@ public class LoginServiceImpl implements LoginService {
                 .setPassword(user.getPassword());
 
         LoginUser principal = doLogin(tokenUsernamePassword);
-        LoginUser userInfo = userService.getLoginUserPermsInfo(principal.getUserId());
-        BeanUtils.copyProperties(userInfo, principal);
+        userService.setLoginUserPermsInfo(principal);
 
         return RedisTokenUtils.createToken(principal);
     }

@@ -43,6 +43,7 @@ public class GlobalExceptionControllerAdvice {
      */
     @ExceptionHandler(UnauthorizedException.class)
     public R<Void> handleUnauthorizedException(UnauthorizedException e) {
+        log.error(e.getMessage(), e);
         return R.error(BizCodeEnum.PERMISSIONS_DENIAL.getCode(), "您没有操作此功能的权限，请联系管理员开通权限");
     }
 

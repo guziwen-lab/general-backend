@@ -5,13 +5,17 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.supermap.common.constant.MenuType;
 import com.supermap.common.util.BeanUtils;
+import com.supermap.common.util.CollectionUtils;
 import com.supermap.common.util.StringUtils;
 import com.supermap.modules.sys.dao.UserDao;
 import com.supermap.modules.sys.dto.UserDTO;
 import com.supermap.modules.sys.dto.UserSaveDTO;
 import com.supermap.modules.sys.entity.PermissionEntity;
+import com.supermap.modules.sys.entity.RoleEntity;
 import com.supermap.modules.sys.entity.UserEntity;
+import com.supermap.modules.sys.entity.UserRoleRelationEntity;
 import com.supermap.modules.sys.service.PermissionService;
+import com.supermap.modules.sys.service.UserRoleRelationService;
 import com.supermap.modules.sys.service.UserService;
 import com.supermap.modules.sys.vo.UserVO;
 import com.supermap.shiro.LoginUser;
@@ -38,6 +42,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     private final PermissionService permissionService;
 
     private final RoleServiceImpl roleService;
+
+    private final UserRoleRelationService userRoleRelationService;
 
     @Override
     public Page<UserVO> queryPage(UserDTO dto) {
@@ -70,6 +76,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateDTO(UserSaveDTO dto) {
         UserEntity userEntity = new UserEntity();
@@ -86,13 +93,38 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             throw new IllegalArgumentException("用户名已存在");
         }
 
+        List<Long> roleIds = dto.getRoleIds();
+        if (CollectionUtils.isNotEmpty(roleIds)) {
+            userRoleRelationService.removeByUserId(dto.getUserId());
+
+            long count = roleService.count(new LambdaQueryWrapper<RoleEntity>()
+                    .in(RoleEntity::getRoleId, roleIds));
+            if (count != roleIds.size())
+                throw new IllegalArgumentException("角色不存在");
+
+            List<UserRoleRelationEntity> relationEntities = roleIds.stream()
+                    .map(item -> {
+                        UserRoleRelationEntity userRoleRelationEntity = new UserRoleRelationEntity();
+                        userRoleRelationEntity.setUserId(userEntity.getUserId());
+                        userRoleRelationEntity.setRoleId(item);
+                        return userRoleRelationEntity;
+                    }).toList();
+            userRoleRelationService.saveBatch(relationEntities);
+        }
+
         // 更新登录缓存
+        if (Objects.equals(LoginUserContextHandler.getLoginUser().getUserId(), userEntity.getUserId()))
+            refreshLoginUser(dto.getUserId());
+    }
+
+    private void refreshLoginUser(Long userId) {
         LoginUser loginUser = LoginUserContextHandler.getLoginUser();
-        userEntity = getById(dto.getUserId());
-        LoginUser loginUserPermsInfo = getLoginUserPermsInfo(userEntity.getUserId());
-        BeanUtils.copyProperties(userEntity, loginUserPermsInfo);
-        loginUserPermsInfo.setToken(loginUser.getToken());
-        LoginUserContextHandler.refreshLoginUser(loginUserPermsInfo);
+
+        UserEntity userEntity = getById(userId);
+        BeanUtils.copyProperties(userEntity, loginUser);
+        setLoginUserPermsInfo(loginUser);
+
+        LoginUserContextHandler.refreshLoginUser(loginUser);
     }
 
     @Override
@@ -126,13 +158,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public LoginUser getLoginUserPermsInfo(Long userId) {
-        LoginUser loginUser = new LoginUser();
-
-        Set<String> roleNames = roleService.getRoleNamesByUserId(userId);
+    public void setLoginUserPermsInfo(LoginUser loginUser) {
+        Set<String> roleNames = roleService.getRoleNamesByUserId(loginUser.getUserId());
         loginUser.setRoles(roleNames);
 
-        Set<PermissionEntity> permissionEntities = permissionService.getByUserId(userId);
+        Set<PermissionEntity> permissionEntities = permissionService.getByUserId(loginUser.getUserId());
         loginUser.setPermissions(permissionEntities.stream()
                 .map(PermissionEntity::getPermsKey)
                 .collect(Collectors.toSet()));
@@ -144,8 +174,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 .filter(permissionEntity -> Objects.equals(permissionEntity.getType(), MenuType.BUTTON))
                 .map(PermissionEntity::getPermsKey)
                 .collect(Collectors.toSet()));
-
-        return loginUser;
     }
 
 }

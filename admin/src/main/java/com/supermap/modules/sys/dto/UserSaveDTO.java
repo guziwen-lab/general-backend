@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * 用户表
@@ -31,5 +31,8 @@ public class UserSaveDTO {
 
     @Schema(title = "头像")
     private Long avatar;
+
+    @Schema(title = "角色id")
+    private List<Long> roleIds;
 
 }

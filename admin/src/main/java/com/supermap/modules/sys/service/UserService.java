@@ -27,7 +27,7 @@ public interface UserService extends IService<UserEntity> {
 
     void resetAll();
 
-    LoginUser getLoginUserPermsInfo(Long userId);
+    void setLoginUserPermsInfo(LoginUser principal);
 
 }
 
