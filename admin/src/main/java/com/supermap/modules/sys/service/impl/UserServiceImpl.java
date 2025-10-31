@@ -76,6 +76,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         BeanUtils.copyProperties(dto, userEntity);
         if (StringUtils.isNotBlank(dto.getPassword())) {
             userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        } else {
+            userEntity.setPassword(null);
         }
         userEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         try {

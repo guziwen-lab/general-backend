@@ -10,10 +10,13 @@ import com.supermap.modules.sys.entity.RoleEntity;
 import com.supermap.modules.sys.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 角色表
@@ -23,12 +26,17 @@ import java.util.Arrays;
 @Tag(name = "角色表")
 @RestController
 @RequestMapping("/sys/role")
+@AllArgsConstructor
 public class RoleController {
 
     private final RoleService roleService;
 
-    public RoleController(RoleService roleService) {
-        this.roleService = roleService;
+    @Operation(summary = "全部角色")
+    @GetMapping("/all")
+    @RequiresPermissions("sys:role:select")
+    public R<List<RoleEntity>> all() {
+        List<RoleEntity> all = roleService.all();
+        return R.ok(all);
     }
 
     @Operation(summary = "列表")

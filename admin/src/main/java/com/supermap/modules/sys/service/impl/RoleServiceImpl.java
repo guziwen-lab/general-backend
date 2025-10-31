@@ -15,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 @Service("roleService")
@@ -57,6 +58,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
         BeanUtils.copyProperties(dto, roleEntity);
         roleEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         updateById(roleEntity);
+    }
+
+    @Override
+    public List<RoleEntity> all() {
+        return list(new LambdaQueryWrapper<>(RoleEntity.class)
+                .orderByDesc(RoleEntity::getCreateTime));
     }
 
     private RoleEntity getByRoleName(String roleName) {
