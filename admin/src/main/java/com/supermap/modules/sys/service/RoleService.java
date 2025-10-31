@@ -20,13 +20,15 @@ public interface RoleService extends IService<RoleEntity> {
 
     Set<String> getRoleNamesByUserId(Long userId);
 
-    void saveDTO(RoleSaveDTO dto);
+    Long saveDTO(RoleSaveDTO dto);
 
     void updateDTO(RoleSaveDTO dto);
 
     List<RoleEntity> all();
 
     List<RoleEntity> getByUserId(Long userId);
+
+    void delete(List<Long> roleIds);
 
 }
 

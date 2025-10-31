@@ -12,7 +12,7 @@
 
     <select id="page" resultType="com.supermap.modules.sys.vo.UserVO">
         select * from (
-        select u.*, string_agg(r.role_name, ', ' order by r.role_id) AS role_names
+        select u.*, string_agg(r.role_name, ', ' order by r.create_time) AS role_names
         from sys_user u
                  left join sys_user_role_relation rel on u.user_id = rel.user_id
                  left join sys_role r on r.role_id = rel.role_id

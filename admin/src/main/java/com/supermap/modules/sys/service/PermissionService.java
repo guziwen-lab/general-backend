@@ -26,5 +26,9 @@ public interface PermissionService extends IService<PermissionEntity> {
 
     void updateDTOById(PermissionSaveDTO dto);
 
+    List<PermissionEntity> all();
+
+    void delete(List<Long> permissionIds);
+
 }
 

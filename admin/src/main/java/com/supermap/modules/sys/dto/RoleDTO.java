@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -17,19 +18,13 @@ import java.util.Date;
 @Data
 public class RoleDTO extends PageParam {
 
-    @Schema(title = "角色id")
-    private Long roleId;
+    @Schema(title = "开始时间")
+    private Timestamp startTime;
 
-    @Schema(title = "角色名称")
-    private String roleName;
+    @Schema(title = "结束时间")
+    private Timestamp endTime;
 
-    @Schema(title = "备注")
-    private String remark;
-
-    @Schema(title = "创建时间")
-    private Date createTime;
-
-    @Schema(title = "更新时间")
-    private Date updateTime;
+    @Schema(title = "关键词")
+    private String keyword;
 
 }

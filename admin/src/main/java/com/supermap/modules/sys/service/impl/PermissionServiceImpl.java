@@ -9,13 +9,19 @@ import com.supermap.modules.sys.dto.PermissionDTO;
 import com.supermap.modules.sys.dto.PermissionSaveDTO;
 import com.supermap.modules.sys.entity.PermissionEntity;
 import com.supermap.modules.sys.service.PermissionService;
+import com.supermap.modules.sys.service.RolePermissionRelationService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
 
+@AllArgsConstructor
 @Service("permissionService")
 public class PermissionServiceImpl extends ServiceImpl<PermissionDao, PermissionEntity> implements PermissionService {
+
+    private final RolePermissionRelationService rolePermissionRelationService;
 
     @Override
     public Page<PermissionEntity> queryPage(PermissionDTO dto) {
@@ -52,6 +58,20 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionDao, Permission
         PermissionEntity permissionEntity = new PermissionEntity();
         BeanUtils.copyProperties(dto, permissionEntity);
         updateById(permissionEntity);
+    }
+
+    @Override
+    public List<PermissionEntity> all() {
+        return list(new LambdaQueryWrapper<>(PermissionEntity.class)
+                .orderByAsc(PermissionEntity::getSort)
+                .orderByAsc(PermissionEntity::getCreateTime));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(List<Long> permissionIds) {
+        removeByIds(permissionIds);
+        rolePermissionRelationService.removeByPermissionIds(permissionIds);
     }
 
 }

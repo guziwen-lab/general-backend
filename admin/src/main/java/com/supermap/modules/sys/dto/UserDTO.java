@@ -26,7 +26,4 @@ public class UserDTO extends PageParam {
     @Schema(title = "关键词")
     private String keyword;
 
-	@Schema(title = "昵称")
-	private String nickname;
-
 }

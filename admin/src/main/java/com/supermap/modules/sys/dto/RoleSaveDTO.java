@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 角色表
@@ -29,10 +30,7 @@ public class RoleSaveDTO {
     @Schema(title = "备注")
     private String remark;
 
-    @Schema(title = "创建时间")
-    private Date createTime;
-
-    @Schema(title = "更新时间")
-    private Date updateTime;
+    @Schema(title = "权限id")
+    private List<Long> permissionIds;
 
 }

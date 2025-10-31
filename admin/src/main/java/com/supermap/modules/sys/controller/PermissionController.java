@@ -1,11 +1,14 @@
 package com.supermap.modules.sys.controller;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.supermap.modules.sys.entity.RoleEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,14 @@ import com.supermap.modules.sys.service.PermissionService;
 public class PermissionController {
 
     private final PermissionService permissionService;
+
+    @Operation(summary = "全部权限")
+    @GetMapping("/all")
+    @RequiresPermissions("sys:permission:select")
+    public R<List<PermissionEntity>> all() {
+        List<PermissionEntity> all = permissionService.all();
+        return R.ok(all);
+    }
 
     @Operation(summary = "分页查询")
     @PostMapping("/page")
@@ -61,7 +72,7 @@ public class PermissionController {
     @Operation(summary = "删除")
     @PostMapping("/delete")
     public R<Void> delete(@RequestBody Long[] permissionIds) {
-        permissionService.removeByIds(Arrays.asList(permissionIds));
+        permissionService.delete(Arrays.asList(permissionIds));
         return R.ok();
     }
 

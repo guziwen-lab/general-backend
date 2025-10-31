@@ -57,7 +57,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void saveDTO(UserSaveDTO dto) {
+    public Long saveDTO(UserSaveDTO dto) {
         UserEntity username = getByUsername(dto.getUsername());
         if (username != null) {
             throw new IllegalArgumentException("用户名已存在");
@@ -77,6 +77,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         }
 
         saveRoleByUserId(userEntity.getUserId(), dto.getRoleIds());
+
+        return userEntity.getUserId();
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -193,6 +195,13 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         userVO.setRoleEntities(roles);
 
         return userVO;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void delete(List<Long> userIds) {
+        removeByIds(userIds);
+        userRoleRelationService.removeByUserIds(userIds);
     }
 
 }

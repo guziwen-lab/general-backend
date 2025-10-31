@@ -50,9 +50,9 @@ public class UserController {
     @Operation(summary = "保存")
     @PostMapping("/save")
     @RequiresPermissions("sys:user:save")
-    public R<Void> save(@RequestBody @Validated(Add.class) UserSaveDTO dto) {
-        userService.saveDTO(dto);
-        return R.ok();
+    public R<Long> save(@RequestBody @Validated(Add.class) UserSaveDTO dto) {
+        Long userId = userService.saveDTO(dto);
+        return R.ok(userId);
     }
 
     @Operation(summary = "修改")
@@ -82,7 +82,7 @@ public class UserController {
     @PostMapping("/delete")
     @RequiresPermissions("sys:user:delete")
     public R<Void> delete(@RequestBody Long[] userIds) {
-        userService.removeByIds(Arrays.asList(userIds));
+        userService.delete(Arrays.asList(userIds));
         return R.ok();
     }
 

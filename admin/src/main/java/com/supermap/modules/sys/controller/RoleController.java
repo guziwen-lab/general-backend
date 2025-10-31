@@ -55,9 +55,9 @@ public class RoleController {
 
     @Operation(summary = "保存")
     @PostMapping("/save")
-    public R<Void> save(@RequestBody @Validated(Add.class) RoleSaveDTO dto) {
-        roleService.saveDTO(dto);
-        return R.ok();
+    public R<Long> save(@RequestBody @Validated(Add.class) RoleSaveDTO dto) {
+        Long roleId = roleService.saveDTO(dto);
+        return R.ok(roleId);
     }
 
     @Operation(summary = "修改")
@@ -70,7 +70,7 @@ public class RoleController {
     @Operation(summary = "删除")
     @PostMapping("/delete")
     public R<Void> delete(@RequestBody Long[] roleIds) {
-        roleService.removeByIds(Arrays.asList(roleIds));
+        roleService.delete(Arrays.asList(roleIds));
         return R.ok();
     }
 

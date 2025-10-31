@@ -8,6 +8,8 @@ import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.vo.UserVO;
 import com.supermap.shiro.LoginUser;
 
+import java.util.List;
+
 /**
  * 用户表
  *
@@ -19,7 +21,7 @@ public interface UserService extends IService<UserEntity> {
 
     UserEntity getByUsername(String username);
 
-    void saveDTO(UserSaveDTO dto);
+    Long saveDTO(UserSaveDTO dto);
 
     void updateDTO(UserSaveDTO dto);
 
@@ -30,6 +32,8 @@ public interface UserService extends IService<UserEntity> {
     void setLoginUserPermsInfo(LoginUser principal);
 
     UserVO getUserVO(Long userId);
+
+    void delete(List<Long> userIds);
 
 }
 
