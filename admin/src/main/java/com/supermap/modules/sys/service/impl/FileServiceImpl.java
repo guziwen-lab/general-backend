@@ -53,7 +53,7 @@ public class FileServiceImpl extends ServiceImpl<FileDao, FileEntity> implements
     }
 
     @Override
-    public Long upload(MultipartFile file) {
+    public FileEntity upload(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             return upload(inputStream, file.getOriginalFilename());
         } catch (IOException e) {
@@ -62,7 +62,7 @@ public class FileServiceImpl extends ServiceImpl<FileDao, FileEntity> implements
     }
 
     @Override
-    public Long upload(InputStream inputStream, String fileName) {
+    public FileEntity upload(InputStream inputStream, String fileName) {
         FileEntity fileEntity = new FileEntity();
         String dest = getFilePath() + UUIDUtils.get() + "." + FileNameUtils.getSuffix(fileName);
         File destFile = FileUtils.touch(dest);
@@ -78,12 +78,13 @@ public class FileServiceImpl extends ServiceImpl<FileDao, FileEntity> implements
             Timestamp now = new Timestamp(System.currentTimeMillis());
             fileEntity.setCreateTime(now);
             fileEntity.setUpdateTime(now);
+            fileEntity.setRefCount(0);
             save(fileEntity);
         } catch (IOException e) {
             throw new RuntimeException("文件上传失败: " + fileName, e);
         }
 
-        return fileEntity.getId();
+        return fileEntity;
     }
 
     @Override
@@ -193,6 +194,44 @@ public class FileServiceImpl extends ServiceImpl<FileDao, FileEntity> implements
             FileUtils.del(fileEntity.getFilePath());
 
         removeByIds(ids);
+    }
+
+    @Override
+    public void increaseRefCount(Long fileId) {
+        if (fileId == null)
+            return;
+        FileEntity file = getById(fileId);
+        if (file == null)
+            throw new RuntimeException("文件不存在");
+
+        FileEntity update = new FileEntity();
+        update.setId(fileId);
+        update.setRefCount(file.getRefCount() + 1);
+        updateById(update);
+    }
+
+    @Override
+    public void decreaseRefCount(Long fileId) {
+        if (fileId == null)
+            return;
+        FileEntity file = getById(fileId);
+        if (file == null)
+            throw new RuntimeException("文件不存在");
+
+        FileEntity update = new FileEntity();
+        update.setId(fileId);
+        update.setRefCount(Math.max((file.getRefCount() - 1), 0));
+        updateById(update);
+    }
+
+    @Override
+    public void deleteByRefcount() {
+        List<FileEntity> list = list(new LambdaQueryWrapper<FileEntity>()
+                .eq(FileEntity::getRefCount, 0));
+        for (FileEntity fileEntity : list)
+            FileUtils.del(fileEntity.getFilePath());
+
+        removeByIds(list.stream().map(FileEntity::getId).toList());
     }
 
 }

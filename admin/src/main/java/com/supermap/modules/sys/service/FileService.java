@@ -20,12 +20,12 @@ public interface FileService extends IService<FileEntity> {
 
     Page<FileEntity> queryPage(FileDTO dto);
 
-    Long upload(MultipartFile file);
+    FileEntity upload(MultipartFile file);
 
     /**
      * 不自动关流
      */
-    Long upload(InputStream inputStream, String fileName);
+    FileEntity upload(InputStream inputStream, String fileName);
 
     Long upload(String content, String fileName);
 
@@ -40,6 +40,12 @@ public interface FileService extends IService<FileEntity> {
     String downloadToBase64(Long id);
 
     void delete(List<Long> list);
+
+    void increaseRefCount(Long avatar);
+
+    void decreaseRefCount(Long avatar);
+
+    void deleteByRefcount();
 
 }
 

@@ -14,6 +14,7 @@ import com.supermap.modules.sys.entity.PermissionEntity;
 import com.supermap.modules.sys.entity.RoleEntity;
 import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.entity.UserRoleRelationEntity;
+import com.supermap.modules.sys.service.FileService;
 import com.supermap.modules.sys.service.PermissionService;
 import com.supermap.modules.sys.service.UserRoleRelationService;
 import com.supermap.modules.sys.service.UserService;
@@ -44,6 +45,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     private final RoleServiceImpl roleService;
 
     private final UserRoleRelationService userRoleRelationService;
+
+    private final FileService fileService;
 
     @Override
     public Page<UserVO> queryPage(UserDTO dto) {
@@ -78,30 +81,42 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
         saveRoleByUserId(userEntity.getUserId(), dto.getRoleIds());
 
+        if (userEntity.getAvatar() != null)
+            fileService.increaseRefCount(userEntity.getAvatar());
+
         return userEntity.getUserId();
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateDTO(UserSaveDTO dto) {
-        UserEntity userEntity = new UserEntity();
-        BeanUtils.copyProperties(dto, userEntity);
+        UserEntity user = getById(dto.getUserId());
+        if (user == null)
+            throw new IllegalArgumentException("用户不存在");
+
+        UserEntity update = new UserEntity();
+        BeanUtils.copyProperties(dto, update);
         if (StringUtils.isNotBlank(dto.getPassword())) {
-            userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
+            update.setPassword(passwordEncoder.encode(dto.getPassword()));
         } else {
-            userEntity.setPassword(null);
+            update.setPassword(null);
         }
-        userEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+        update.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         try {
-            updateById(userEntity);
+            updateById(update);
         } catch (DataIntegrityViolationException ex) {
             throw new IllegalArgumentException("用户名已存在");
         }
 
         saveRoleByUserId(dto.getUserId(), dto.getRoleIds());
 
+        if (update.getAvatar() != null && !Objects.equals(user.getAvatar(), update.getAvatar())) {
+            fileService.increaseRefCount(update.getAvatar());
+            fileService.decreaseRefCount(user.getAvatar());
+        }
+
         // 更新登录缓存
-        if (Objects.equals(LoginUserContextHandler.getLoginUser().getUserId(), userEntity.getUserId()))
+        if (Objects.equals(LoginUserContextHandler.getLoginUser().getUserId(), update.getUserId()))
             refreshLoginUser(dto.getUserId());
     }
 

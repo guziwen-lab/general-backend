@@ -43,4 +43,7 @@ public class FileEntity {
     @Schema(title = "更新时间")
     private Timestamp updateTime;
 
+    @Schema(title = "引用计数")
+    private Integer refCount;
+
 }

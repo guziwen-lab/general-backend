@@ -29,9 +29,9 @@ public class FileController {
 
     @Operation(summary = "上传文件")
     @PostMapping("/upload")
-    public R<Long> upload(@RequestParam(value = "file") MultipartFile file) {
-        Long id = fileService.upload(file);
-        return R.ok(id);
+    public R<FileEntity> upload(@RequestParam(value = "file") MultipartFile file) {
+        FileEntity fileEntity = fileService.upload(file);
+        return R.ok(fileEntity);
     }
 
     @Operation(summary = "下载文件")
@@ -58,6 +58,13 @@ public class FileController {
     @PostMapping("/delete")
     public R<Void> delete(@RequestBody Long[] ids) {
         fileService.delete(Arrays.asList(ids));
+        return R.ok();
+    }
+
+    @Operation(summary = "删除引用计数为0的文件")
+    @PostMapping("/delete/refcount")
+    public R<Void> deleteByRefcount() {
+        fileService.deleteByRefcount();
         return R.ok();
     }
 
