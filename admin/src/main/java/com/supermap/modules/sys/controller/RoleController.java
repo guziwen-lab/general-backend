@@ -8,6 +8,7 @@ import com.supermap.modules.sys.dto.RoleDTO;
 import com.supermap.modules.sys.dto.RoleSaveDTO;
 import com.supermap.modules.sys.entity.RoleEntity;
 import com.supermap.modules.sys.service.RoleService;
+import com.supermap.modules.sys.vo.RoleVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -48,8 +49,8 @@ public class RoleController {
 
     @Operation(summary = "信息")
     @GetMapping("/info/{roleId}")
-    public R<RoleEntity> info(@PathVariable("roleId") Long roleId) {
-        RoleEntity role = roleService.getById(roleId);
+    public R<RoleVO> info(@PathVariable("roleId") Long roleId) {
+        RoleVO role = roleService.getVOById(roleId);
         return R.ok(role);
     }
 

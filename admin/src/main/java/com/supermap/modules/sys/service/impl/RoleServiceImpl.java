@@ -13,6 +13,7 @@ import com.supermap.modules.sys.entity.RoleEntity;
 import com.supermap.modules.sys.entity.RolePermissionRelationEntity;
 import com.supermap.modules.sys.service.RolePermissionRelationService;
 import com.supermap.modules.sys.service.RoleService;
+import com.supermap.modules.sys.vo.RoleVO;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.util.Set;
 public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements RoleService {
 
     private final RolePermissionRelationService rolePermissionRelationService;
+
     private final PermissionServiceImpl permissionService;
 
     @Override
@@ -66,10 +68,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
     }
 
     private void savePermissionByRoleId(Long roleId, List<Long> permissionIds) {
+        rolePermissionRelationService.removeByRoleIds(Collections.singletonList(roleId));
+
         if (CollectionUtils.isEmpty(permissionIds))
             return;
-
-        rolePermissionRelationService.removeByRoleIds(Collections.singletonList(roleId));
 
         long count = permissionService.count(new LambdaQueryWrapper<PermissionEntity>()
                 .in(PermissionEntity::getPermissionId, permissionIds));
@@ -113,6 +115,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
     public void delete(List<Long> roleIds) {
         removeByIds(roleIds);
         rolePermissionRelationService.removeByRoleIds(roleIds);
+    }
+
+    @Override
+    public RoleVO getVOById(Long roleId) {
+        RoleEntity role = getById(roleId);
+        List<PermissionEntity> permissions = permissionService.getByRoleId(roleId);
+
+        RoleVO roleVO = new RoleVO();
+        BeanUtils.copyProperties(role, roleVO);
+        roleVO.setPermissions(permissions);
+        return roleVO;
     }
 
     private RoleEntity getByRoleName(String roleName) {

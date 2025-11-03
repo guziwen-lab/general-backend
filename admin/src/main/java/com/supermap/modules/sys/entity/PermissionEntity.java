@@ -1,8 +1,6 @@
 package com.supermap.modules.sys.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 
 import java.sql.Timestamp;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +20,7 @@ public class PermissionEntity {
 	@Schema(title = "权限/菜单id")
 	private Long permissionId;
 
+    @TableField(updateStrategy = FieldStrategy.ALWAYS, insertStrategy = FieldStrategy.ALWAYS)
 	@Schema(title = "父权限/菜单id")
 	private Long parentId;
 
@@ -54,5 +53,9 @@ public class PermissionEntity {
 
 	@Schema(title = "更新时间")
 	private Timestamp updateTime;
+
+    @Schema(title = "版本号")
+    @Version
+    private Integer version;
 
 }

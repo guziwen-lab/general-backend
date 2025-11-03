@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.supermap.common.valid.group.UpdateSort;
+import com.supermap.modules.sys.vo.PermissionVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -35,8 +37,8 @@ public class PermissionController {
     @Operation(summary = "全部权限")
     @GetMapping("/all")
     @RequiresPermissions("sys:permission:select")
-    public R<List<PermissionEntity>> all() {
-        List<PermissionEntity> all = permissionService.all();
+    public R<List<PermissionVO>> all() {
+        List<PermissionVO> all = permissionService.all();
         return R.ok(all);
     }
 
@@ -65,6 +67,13 @@ public class PermissionController {
     @PutMapping("/update")
     public R<Void> update(@RequestBody @Validated(Update.class) PermissionSaveDTO dto) {
         permissionService.updateDTOById(dto);
+        return R.ok();
+    }
+
+    @Operation(summary = "批量修改排序和层级")
+    @PutMapping("/batch/update/sort-level")
+    public R<Void> batchUpdateSortAndLevel(@RequestBody @Validated(UpdateSort.class) List<PermissionSaveDTO> dto) {
+        permissionService.batchUpdateSortAndLevel(dto);
         return R.ok();
     }
 

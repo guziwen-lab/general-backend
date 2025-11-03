@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.supermap.modules.sys.dto.RoleDTO;
 import com.supermap.modules.sys.dto.RoleSaveDTO;
 import com.supermap.modules.sys.entity.RoleEntity;
+import com.supermap.modules.sys.vo.RoleVO;
 
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,8 @@ public interface RoleService extends IService<RoleEntity> {
     List<RoleEntity> getByUserId(Long userId);
 
     void delete(List<Long> roleIds);
+
+    RoleVO getVOById(Long roleId);
 
 }
 

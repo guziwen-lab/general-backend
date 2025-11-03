@@ -121,10 +121,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     private void saveRoleByUserId(Long userId, List<Long> roleIds) {
+        userRoleRelationService.removeByUserId(userId);
+
         if (CollectionUtils.isEmpty(roleIds))
             return;
-
-        userRoleRelationService.removeByUserId(userId);
 
         long count = roleService.count(new LambdaQueryWrapper<RoleEntity>()
                 .in(RoleEntity::getRoleId, roleIds));

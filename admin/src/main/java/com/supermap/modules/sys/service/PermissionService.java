@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.supermap.modules.sys.dto.PermissionDTO;
 import com.supermap.modules.sys.dto.PermissionSaveDTO;
 import com.supermap.modules.sys.entity.PermissionEntity;
+import com.supermap.modules.sys.vo.PermissionVO;
 
 import java.util.List;
 import java.util.Set;
@@ -26,9 +27,11 @@ public interface PermissionService extends IService<PermissionEntity> {
 
     void updateDTOById(PermissionSaveDTO dto);
 
-    List<PermissionEntity> all();
+    List<PermissionVO> all();
 
     void delete(List<Long> permissionIds);
+
+    void batchUpdateSortAndLevel(List<PermissionSaveDTO> dto);
 
 }
 

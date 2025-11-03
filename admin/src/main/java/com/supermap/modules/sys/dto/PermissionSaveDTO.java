@@ -2,6 +2,7 @@ package com.supermap.modules.sys.dto;
 
 import com.supermap.common.valid.group.Add;
 import com.supermap.common.valid.group.Update;
+import com.supermap.common.valid.group.UpdateSort;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +19,7 @@ import java.sql.Timestamp;
 @Data
 public class PermissionSaveDTO {
 
-	@NotNull(groups = Update.class)
+    @NotNull(groups = {Update.class, UpdateSort.class})
 	@Schema(title = "权限/菜单id")
 	private Long permissionId;
 
@@ -36,10 +37,11 @@ public class PermissionSaveDTO {
 	@Schema(title = "菜单路径 (树id的路径，主要用于存放从根节点到当前树的父节点的路径)")
 	private String path;
 
-    @NotBlank(groups = Add.class)
+    @NotNull(groups = {Add.class, UpdateSort.class})
 	@Schema(title = "菜单层级")
 	private Integer level;
 
+    @NotNull(groups = {UpdateSort.class})
 	@Schema(title = "排序")
 	private Integer sort;
 
@@ -58,5 +60,9 @@ public class PermissionSaveDTO {
 
 	@Schema(title = "更新时间")
 	private Timestamp updateTime;
+
+    @NotNull(groups = {Update.class, UpdateSort.class})
+    @Schema(title = "版本号")
+    private Integer version;
 
 }

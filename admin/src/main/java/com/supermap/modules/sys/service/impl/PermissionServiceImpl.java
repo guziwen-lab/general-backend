@@ -10,7 +10,9 @@ import com.supermap.modules.sys.dto.PermissionSaveDTO;
 import com.supermap.modules.sys.entity.PermissionEntity;
 import com.supermap.modules.sys.service.PermissionService;
 import com.supermap.modules.sys.service.RolePermissionRelationService;
+import com.supermap.modules.sys.vo.PermissionVO;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,10 +63,27 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionDao, Permission
     }
 
     @Override
-    public List<PermissionEntity> all() {
-        return list(new LambdaQueryWrapper<>(PermissionEntity.class)
+    public List<PermissionVO> all() {
+        List<PermissionEntity> list = list(new LambdaQueryWrapper<>(PermissionEntity.class)
                 .orderByAsc(PermissionEntity::getSort)
                 .orderByAsc(PermissionEntity::getCreateTime));
+
+        List<PermissionVO> all = BeanUtils.copyToList(list, PermissionVO.class);
+        List<PermissionVO> root = all.stream()
+                .filter(permissionVO -> permissionVO.getParentId() == null)
+                .toList();
+
+        root.forEach(permissionVO -> setChildren(permissionVO, all));
+
+        return root;
+    }
+
+    private void setChildren(PermissionVO permissionVO, List<PermissionVO> all) {
+        List<PermissionVO> children = all.stream()
+                .filter(vo -> permissionVO.getPermissionId().equals(vo.getParentId()))
+                .toList();
+        permissionVO.setChildren(children);
+        children.forEach(vo -> setChildren(vo, all));
     }
 
     @Override
@@ -72,6 +91,16 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionDao, Permission
     public void delete(List<Long> permissionIds) {
         removeByIds(permissionIds);
         rolePermissionRelationService.removeByPermissionIds(permissionIds);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void batchUpdateSortAndLevel(List<PermissionSaveDTO> dto) {
+        List<PermissionEntity> permissionEntities = BeanUtils.copyToList(dto, PermissionEntity.class);
+        boolean b = updateBatchById(permissionEntities);
+        if (!b) {
+            throw new OptimisticLockingFailureException("更新失败");
+        }
     }
 
 }
