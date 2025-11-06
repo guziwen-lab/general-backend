@@ -13,6 +13,8 @@ import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
+import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -82,6 +84,13 @@ public class ShiroConfig {
         return defaultWebSecurityManager;
     }
 
+    @Bean
+    public ShiroFilterChainDefinition shiroFilterChainDefinition() {
+        DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
+        chainDefinition.addPathDefinitions(filterChainDefinitionMap);
+        return chainDefinition;
+    }
+
     /**
      * Shiro内置常用的过滤器：
      * anon: 无需认证（登录）可以访问
@@ -91,7 +100,8 @@ public class ShiroConfig {
      * role: 该资源必须得到角色权限才可以访问
      */
     @Bean("shiroFilter")
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager defaultWebSecurityManager) {
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager defaultWebSecurityManager,
+                                                         ShiroFilterChainDefinition shiroFilterChainDefinition) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(defaultWebSecurityManager);
         shiroFilterFactoryBean.setLoginUrl("/login");
@@ -100,7 +110,8 @@ public class ShiroConfig {
         filters.put(CUSTOM_FILTER, new RedisTokenFilter());
         shiroFilterFactoryBean.setFilters(filters);
 
-        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+        Map<String, String> filterChainMap = shiroFilterChainDefinition.getFilterChainMap();
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainMap);
 
         return shiroFilterFactoryBean;
     }
