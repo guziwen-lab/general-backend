@@ -13,13 +13,17 @@ import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -57,11 +61,6 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/**", CUSTOM_FILTER);
     }
 
-    @Bean
-    public AuthorizingRealm authorizingRealm(CredentialsMatcher credentialsMatcher) {
-        return new RedisRealm(credentialsMatcher);
-    }
-
     @ConditionalOnMissingBean(PasswordEncoder.class)
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -70,9 +69,8 @@ public class ShiroConfig {
 
     @ConditionalOnMissingBean(CredentialsMatcher.class)
     @Bean
-    public CredentialsMatcher credentialsMatcher(UserService userService,
-                                                 PasswordEncoder passwordEncoder) {
-        return new DefaultCredentialsMatcher(userService, passwordEncoder);
+    public DefaultCredentialsMatcher credentialsMatcher(PasswordEncoder passwordEncoder) {
+        return new DefaultCredentialsMatcher(passwordEncoder);
     }
 
     @Bean
@@ -112,11 +110,17 @@ public class ShiroConfig {
         return shiroFilterFactoryBean;
     }
 
+    @Bean
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }
+
     /**
      * 开启Shiro的注解(如@RequiresRoles, @RequiresPermissions)
      * 配置以下两个bean(DefaultAdvisorAutoProxyCreator和AuthorizationAttributeSourceAdvisor)即可实现此功能
      */
     @Bean
+    @DependsOn("lifecycleBeanPostProcessor")
     public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
         advisorAutoProxyCreator.setProxyTargetClass(true);

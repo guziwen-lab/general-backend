@@ -58,3 +58,9 @@ file:
 logging:
   level:
     com.supermap: debug
+#    org.springframework.jdbc.support.JdbcTransactionManager: DEBUG # Spring JDBC 事务管理日志
+#    org.apache.ibatis: DEBUG # MyBatis 核心 SQL 执行日志
+#    org.mybatis.spring: DEBUG # MyBatis-Spring 事务同步与 SqlSession 管理日志
+#    org.springframework.beans.factory.support.DefaultListableBeanFactory: DEBUG # Spring Bean 创建日志
+#    org.springframework.beans.factory.support.AbstractBeanFactory: DEBUG # Spring Bean 创建日志
+#    org.springframework.beans.factory.annotation: DEBUG # Spring Bean 创建日志

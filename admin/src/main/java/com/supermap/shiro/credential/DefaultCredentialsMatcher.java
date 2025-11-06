@@ -15,12 +15,9 @@ import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
  */
 public class DefaultCredentialsMatcher extends SimpleCredentialsMatcher {
 
-    private final UserService userService;
-
     private final PasswordEncoder passwordEncoder;
 
-    public DefaultCredentialsMatcher(UserService userService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
+    public DefaultCredentialsMatcher(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -30,17 +27,19 @@ public class DefaultCredentialsMatcher extends SimpleCredentialsMatcher {
         Object tokenCredentials = getCredentials(token);
         if (tokenCredentials == null)
             return true;
-        String plainPassword = (String) tokenCredentials;
+        String plainPassword = tokenCredentials instanceof char[]
+                ? new String((char[]) tokenCredentials)
+                : tokenCredentials.toString();
 
-        // 获取数据库中的加密密码
-        LoginUser principal = (LoginUser) token.getPrincipal();
-        UserEntity userEntity = userService.getByUsername(principal.getUsername());
-        if (userEntity == null) {
-            throw new UnknownAccountException("用户不存在");
+        // 从 AuthenticationInfo 中取已存储的凭证（通常是加密后的密码字符串）
+        Object accountCredentials = getCredentials(info);
+        if (accountCredentials == null) {
+            return false;
         }
-        BeanUtils.copyProperties(userEntity, principal);
+        String storedHash = accountCredentials.toString();
 
-        return passwordEncoder.matches(plainPassword, userEntity.getPassword());
+        // 使用 Spring 的 PasswordEncoder 比对
+        return passwordEncoder.matches(plainPassword, storedHash);
     }
 
 }

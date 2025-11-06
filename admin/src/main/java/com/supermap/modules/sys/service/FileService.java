@@ -41,9 +41,9 @@ public interface FileService extends IService<FileEntity> {
 
     void delete(List<Long> list);
 
-    void increaseRefCount(Long avatar);
+    void increaseRefCount(Long fileId);
 
-    void decreaseRefCount(Long avatar);
+    void decreaseRefCount(Long fileId);
 
     void deleteByRefcount();
 

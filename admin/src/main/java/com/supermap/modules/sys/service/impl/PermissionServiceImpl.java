@@ -12,15 +12,18 @@ import com.supermap.modules.sys.service.PermissionService;
 import com.supermap.modules.sys.service.RolePermissionRelationService;
 import com.supermap.modules.sys.vo.PermissionVO;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
 @Service("permissionService")
+@Slf4j
 public class PermissionServiceImpl extends ServiceImpl<PermissionDao, PermissionEntity> implements PermissionService {
 
     private final RolePermissionRelationService rolePermissionRelationService;
@@ -96,11 +99,18 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionDao, Permission
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchUpdateSortAndLevel(List<PermissionSaveDTO> dto) {
+        log.info("tx active? {}, synchronization active? {}",
+                TransactionSynchronizationManager.isActualTransactionActive(),
+                TransactionSynchronizationManager.isSynchronizationActive());
+
         List<PermissionEntity> permissionEntities = BeanUtils.copyToList(dto, PermissionEntity.class);
-        boolean b = updateBatchById(permissionEntities);
-        if (!b) {
-            throw new OptimisticLockingFailureException("更新失败");
-        }
+        updateBatchById(permissionEntities);
+        throw new OptimisticLockingFailureException("更新失败");
+
+        /*int count = baseMapper.updateBatchById(permissionEntities);
+        if (count != permissionEntities.size()) {
+            throw new RuntimeException("更新失败");
+        }*/
     }
 
 }

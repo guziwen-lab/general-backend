@@ -4,6 +4,7 @@ import cn.hutool.crypto.SmUtil;
 import cn.hutool.crypto.digest.SM3;
 import com.supermap.shiro.config.SM3KeyProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * @author gzw

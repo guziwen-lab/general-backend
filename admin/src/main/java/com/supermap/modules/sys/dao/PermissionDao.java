@@ -20,4 +20,6 @@ public interface PermissionDao extends BaseMapper<PermissionEntity> {
 
     Set<PermissionEntity> getByUserId(@Param("userId") Long userId);
 
+    int updateBatchById(@Param("permissionEntities") List<PermissionEntity> permissionEntities);
+
 }

@@ -30,9 +30,6 @@ public class PermissionEntity {
 	@Schema(title = "权限key")
 	private String permsKey;
 
-	@Schema(title = "菜单路径 (树id的路径，主要用于存放从根节点到当前树的父节点的路径)")
-	private String path;
-
 	@Schema(title = "菜单层级")
 	private Integer level;
 

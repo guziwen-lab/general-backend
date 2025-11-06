@@ -192,7 +192,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 .collect(Collectors.toSet()));
         loginUser.setRoutes(permissionEntities.stream()
                 .filter(permissionEntity -> Objects.equals(permissionEntity.getType(), MenuType.PAGE))
-                .map(PermissionEntity::getPath)
+                .map(PermissionEntity::getUrl)
                 .collect(Collectors.toSet()));
         loginUser.setButtons(permissionEntities.stream()
                 .filter(permissionEntity -> Objects.equals(permissionEntity.getType(), MenuType.BUTTON))

@@ -1,26 +1,38 @@
 package com.supermap.shiro.realm;
 
+import com.supermap.common.util.StringUtils;
+import com.supermap.modules.sys.entity.UserEntity;
+import com.supermap.modules.sys.service.UserService;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.token.RedisToken;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 /**
  * @author gzw
  */
 @Slf4j
+@Component
 public class RedisRealm extends AuthorizingRealm {
 
-    public RedisRealm(CredentialsMatcher matcher) {
-        super(matcher);
+    private UserService userService;
+
+    @Autowired
+    @Lazy   // 防止过早注入一个没有被动态代理的UserService
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public RedisRealm(CredentialsMatcher credentialsMatcher) {
+        setCredentialsMatcher(credentialsMatcher);
     }
 
     @Override
@@ -40,12 +52,24 @@ public class RedisRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         try {
             LoginUser loginUser = (LoginUser) authenticationToken.getPrincipal();
-            String password = (String) authenticationToken.getCredentials();
-            return new SimpleAuthenticationInfo(loginUser, password, getName());
+            if (StringUtils.isEmpty(loginUser.getPassword())) {
+                // 密码为空说明是通过token在请求其他接口。不是请求登录。
+                return new SimpleAuthenticationInfo(loginUser, authenticationToken.getCredentials(), getName());
+            }
+
+            UserEntity userEntity = userService.getByUsername(loginUser.getUsername());
+            if (userEntity == null)
+                throw new UnknownAccountException("用户不存在: " + loginUser.getUsername());
+
+            if (StringUtils.isEmpty(userEntity.getPassword()))
+                throw new AuthenticationException("用户未设置密码: " + loginUser.getUsername());
+
+            return new SimpleAuthenticationInfo(loginUser, userEntity.getPassword(), getName());
+        } catch (AuthenticationException e) {
+            throw e;
         } catch (Exception e) {
-            if (log.isDebugEnabled())
-                log.debug("认证失败", e);
-            return null;
+            log.debug("认证失败", e);
+            throw new AuthenticationException("认证过程出现异常", e);
         }
     }
 

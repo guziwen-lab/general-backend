@@ -22,10 +22,9 @@ public class RetryLimitCredentialsMatcher extends DefaultCredentialsMatcher {
 
     private static final long RETRY_EXPIRE_SECONDS = 1800;
 
-    public RetryLimitCredentialsMatcher(UserService userService,
-                                        PasswordEncoder passwordEncoder,
+    public RetryLimitCredentialsMatcher(PasswordEncoder passwordEncoder,
                                         RedisTemplate<String, String> redisTemplate) {
-        super(userService, passwordEncoder);
+        super(passwordEncoder);
         this.redisTemplate = redisTemplate;
     }
 
