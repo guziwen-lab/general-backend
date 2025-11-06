@@ -2,7 +2,7 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:postgresql://service.990304.xyz:5432/common_backend?useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:postgresql://service.990304.xyz:5432/common_backend?useUnicode=true&characterEncoding=UTF-8&useAffectedRows=true
     username: postgres
     password: zYdWyb-rbzniq-8wofdO
     driver-class-name: org.postgresql.Driver

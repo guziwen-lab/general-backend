@@ -1,6 +1,7 @@
 package com.supermap.modules.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.supermap.common.util.BeanUtils;
@@ -13,10 +14,12 @@ import com.supermap.modules.sys.service.RolePermissionRelationService;
 import com.supermap.modules.sys.vo.PermissionVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.OptimisticLockingFailureException;
+import org.apache.ibatis.executor.BatchResult;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 import java.util.Set;
@@ -27,6 +30,8 @@ import java.util.Set;
 public class PermissionServiceImpl extends ServiceImpl<PermissionDao, PermissionEntity> implements PermissionService {
 
     private final RolePermissionRelationService rolePermissionRelationService;
+
+    private final SqlSessionFactory sqlSessionFactory;
 
     @Override
     public Page<PermissionEntity> queryPage(PermissionDTO dto) {
@@ -99,18 +104,11 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionDao, Permission
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchUpdateSortAndLevel(List<PermissionSaveDTO> dto) {
-        log.info("tx active? {}, synchronization active? {}",
-                TransactionSynchronizationManager.isActualTransactionActive(),
-                TransactionSynchronizationManager.isSynchronizationActive());
-
         List<PermissionEntity> permissionEntities = BeanUtils.copyToList(dto, PermissionEntity.class);
-        updateBatchById(permissionEntities);
-        throw new OptimisticLockingFailureException("更新失败");
-
-        /*int count = baseMapper.updateBatchById(permissionEntities);
+        int count = baseMapper.updateBatchById(permissionEntities);
         if (count != permissionEntities.size()) {
             throw new RuntimeException("更新失败");
-        }*/
+        }
     }
 
 }
