@@ -12,6 +12,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -23,17 +24,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisRealm extends AuthorizingRealm {
 
-    private UserService userService;
+    private final ObjectProvider<UserService> userProvider;
 
-    @Autowired
-    @Lazy   // 防止过早注入一个没有被动态代理的UserService
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public RedisRealm(CredentialsMatcher credentialsMatcher) {
+    /**
+     * 构造函数
+     *
+     * @param userProvider       UserServiceProvider 防止过早注入一个没有被动态代理的UserService
+     * @param credentialsMatcher 密码匹配器
+     */
+    public RedisRealm(ObjectProvider<UserService> userProvider, CredentialsMatcher credentialsMatcher) {
         setCredentialsMatcher(credentialsMatcher);
+        this.userProvider = userProvider;
     }
+
+    private UserService getUserService() {
+        UserService svc = userProvider.getIfAvailable();
+        if (svc == null) throw new IllegalStateException("UserService 未就绪");
+        return svc;
+    }
+
 
     @Override
     public String getName() {
@@ -57,7 +66,7 @@ public class RedisRealm extends AuthorizingRealm {
                 return new SimpleAuthenticationInfo(loginUser, authenticationToken.getCredentials(), getName());
             }
 
-            UserEntity userEntity = userService.getByUsername(loginUser.getUsername());
+            UserEntity userEntity = getUserService().getByUsername(loginUser.getUsername());
             if (userEntity == null)
                 throw new UnknownAccountException("用户不存在: " + loginUser.getUsername());
 
