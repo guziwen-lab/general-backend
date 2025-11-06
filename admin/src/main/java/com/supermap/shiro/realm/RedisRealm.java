@@ -1,5 +1,6 @@
 package com.supermap.shiro.realm;
 
+import com.supermap.common.util.BeanUtils;
 import com.supermap.common.util.StringUtils;
 import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.service.UserService;
@@ -70,6 +71,8 @@ public class RedisRealm extends AuthorizingRealm {
 
             if (StringUtils.isEmpty(userEntity.getPassword()))
                 throw new AuthenticationException("用户未设置密码: " + loginUser.getUsername());
+
+            BeanUtils.copyProperties(userEntity, loginUser);
 
             return new SimpleAuthenticationInfo(loginUser, userEntity.getPassword(), getName());
         } catch (AuthenticationException e) {
