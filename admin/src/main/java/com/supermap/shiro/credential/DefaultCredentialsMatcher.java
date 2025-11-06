@@ -1,13 +1,8 @@
 package com.supermap.shiro.credential;
 
-import com.supermap.common.util.BeanUtils;
-import com.supermap.modules.sys.entity.UserEntity;
-import com.supermap.modules.sys.service.UserService;
-import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 
 /**

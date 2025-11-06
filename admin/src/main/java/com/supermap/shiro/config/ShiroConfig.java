@@ -1,29 +1,24 @@
 package com.supermap.shiro.config;
 
-import com.supermap.modules.sys.service.UserService;
 import com.supermap.shiro.credential.DefaultCredentialsMatcher;
 import com.supermap.shiro.encoder.BCryptPasswordEncoder;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import com.supermap.shiro.filter.RedisTokenFilter;
-import com.supermap.shiro.realm.RedisRealm;
 import jakarta.servlet.Filter;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

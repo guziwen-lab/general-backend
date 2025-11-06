@@ -1,6 +1,5 @@
 package com.supermap.shiro.credential;
 
-import com.supermap.modules.sys.service.UserService;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import org.apache.shiro.authc.AuthenticationInfo;
