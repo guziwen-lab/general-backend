@@ -1,6 +1,7 @@
-package com.supermap.modules.security.service;
+package com.supermap.modules.security.service.impl;
 
 import com.supermap.common.constant.AuthenticationConstant;
+import com.supermap.modules.security.service.CaptchaService;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import jakarta.servlet.http.HttpServletResponse;

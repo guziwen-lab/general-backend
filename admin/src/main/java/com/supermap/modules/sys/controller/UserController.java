@@ -57,6 +57,7 @@ public class UserController {
 
     @Operation(summary = "修改")
     @PutMapping("/update")
+    @RequiresPermissions("sys:user:update")
     public R<Void> update(@RequestBody @Validated(Update.class) UserSaveDTO dto) {
         userService.updateDTO(dto);
         return R.ok();
@@ -83,6 +84,14 @@ public class UserController {
     @RequiresPermissions("sys:user:delete")
     public R<Void> delete(@RequestBody Long[] userIds) {
         userService.delete(Arrays.asList(userIds));
+        return R.ok();
+    }
+
+    @Operation(summary = "解锁用户登录")
+    @PutMapping("/unlock/{userId}")
+    @RequiresPermissions("sys:user:unlock")
+    public R<Void> unlock(@PathVariable Long userId) {
+        userService.unlock(userId);
         return R.ok();
     }
 

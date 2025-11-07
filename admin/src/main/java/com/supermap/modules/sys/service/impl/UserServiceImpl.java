@@ -3,6 +3,7 @@ package com.supermap.modules.sys.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.supermap.common.constant.AuthenticationConstant;
 import com.supermap.common.constant.MenuType;
 import com.supermap.common.util.BeanUtils;
 import com.supermap.common.util.CollectionUtils;
@@ -25,6 +26,7 @@ import com.supermap.shiro.encoder.PasswordEncoder;
 import lombok.AllArgsConstructor;
 import org.apache.shiro.authz.permission.WildcardPermission;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +49,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     private final UserRoleRelationService userRoleRelationService;
 
     private final FileService fileService;
+
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     public Page<UserVO> queryPage(UserDTO dto) {
@@ -226,6 +230,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     public void delete(List<Long> userIds) {
         removeByIds(userIds);
         userRoleRelationService.removeByUserIds(userIds);
+    }
+
+    @Override
+    public void unlock(Long userId) {
+        redisTemplate.delete(AuthenticationConstant.LOGIN_RETRY_KEY_PREFIX + userId);
     }
 
 }

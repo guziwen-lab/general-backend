@@ -37,5 +37,7 @@ public interface UserService extends IService<UserEntity> {
 
     void delete(List<Long> userIds);
 
+    void unlock(Long userId);
+
 }
 

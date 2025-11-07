@@ -1,5 +1,6 @@
 package com.supermap.shiro.credential;
 
+import com.supermap.common.constant.AuthenticationConstant;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -30,7 +31,7 @@ public class RetryLimitCredentialsMatcher extends DefaultCredentialsMatcher {
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         LoginUser principal = (LoginUser) token.getPrincipal();
-        String key = "login:retry:" + principal.getUsername();
+        String key = AuthenticationConstant.LOGIN_RETRY_KEY_PREFIX + principal.getUserId();
 
         String retryStr = redisTemplate.opsForValue().get(key);
         int retryCount = retryStr == null ? 0 : Integer.parseInt(retryStr);
