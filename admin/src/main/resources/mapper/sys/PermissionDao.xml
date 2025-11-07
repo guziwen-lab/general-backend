@@ -33,39 +33,18 @@
     </select>
 
     <update id="updateBatchById">
-        <foreach collection="permissionEntities" item="item" separator=";">
-            UPDATE sys_permission
-            <set>
-                <if test="item.parentId != null">
-                    parent_id = #{item.parentId},
-                </if>
-                <if test="item.name != null">
-                    name = #{item.name},
-                </if>
-                <if test="item.permsKey != null">
-                    perms_key = #{item.permsKey},
-                </if>
-                <if test="item.level != null">
-                    level = #{item.level},
-                </if>
-                <if test="item.sort != null">
-                    sort = #{item.sort},
-                </if>
-                <if test="item.url != null">
-                    url = #{item.url},
-                </if>
-                <if test="item.type != null">
-                    type = #{item.type},
-                </if>
-                <if test="item.icon != null">
-                    icon = #{item.icon},
-                </if>
-                <!-- 更新时间、版本号始终更新 -->
-                update_time = NOW(),
-                version     = version + 1
-            </set>
-            WHERE permission_id = #{item.permissionId}
-              AND version = #{item.version}
+        update sys_permission
+        set parent_id   = tmp.parent_id,
+            level       = tmp.level,
+            sort        = tmp.sort,
+            update_time = NOW(),
+            version     = sys_permission.version + 1
+        from (values
+        <foreach collection="permissionEntities" item="item" separator=",">
+            (#{item.permissionId}, #{item.version}, #{item.parentId}, #{item.level}, #{item.sort})
         </foreach>
+        ) as tmp(id, version, parent_id, level, sort)
+        where sys_permission.permission_id = tmp.id
+          and sys_permission.version = tmp.version
     </update>
 </mapper>

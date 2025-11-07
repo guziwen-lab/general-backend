@@ -74,6 +74,9 @@ public class RedisRealm extends AuthorizingRealm {
 
             BeanUtils.copyProperties(userEntity, loginUser);
 
+            // 设置权限信息
+            getUserService().setLoginUserPermsInfo(loginUser);
+
             return new SimpleAuthenticationInfo(loginUser, userEntity.getPassword(), getName());
         } catch (AuthenticationException e) {
             throw e;
@@ -89,11 +92,7 @@ public class RedisRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         try {
-            LoginUser loginUser = (LoginUser) principalCollection.getPrimaryPrincipal();
-            SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-            info.setRoles(loginUser.getRoles());
-            info.setStringPermissions(loginUser.getPermissions());
-            return info;
+            return (LoginUser) principalCollection.getPrimaryPrincipal();
         } catch (Exception e) {
             return null;
         }

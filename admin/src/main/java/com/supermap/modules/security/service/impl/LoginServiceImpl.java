@@ -21,8 +21,6 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class LoginServiceImpl implements LoginService {
 
-    private final UserService userService;
-
     private final RedisTemplate<String, String> redisTemplate;
 
     @Override
@@ -32,7 +30,6 @@ public class LoginServiceImpl implements LoginService {
                 .setPassword(user.getPassword());
 
         LoginUser principal = doLogin(tokenUsernamePassword);
-        userService.setLoginUserPermsInfo(principal);
 
         return RedisTokenUtils.createToken(principal);
     }

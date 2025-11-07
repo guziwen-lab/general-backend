@@ -23,6 +23,7 @@ import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import lombok.AllArgsConstructor;
+import org.apache.shiro.authz.permission.WildcardPermission;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,10 +115,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             fileService.increaseRefCount(update.getAvatar());
             fileService.decreaseRefCount(user.getAvatar());
         }
-
-        // 更新登录缓存
-        if (Objects.equals(LoginUserContextHandler.getLoginUser().getUserId(), update.getUserId()))
-            refreshLoginUser(dto.getUserId());
     }
 
     private void saveRoleByUserId(Long userId, List<Long> roleIds) {
@@ -141,7 +138,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         userRoleRelationService.saveBatch(relationEntities);
     }
 
-    private void refreshLoginUser(Long userId) {
+    public LoginUser refreshLoginUser(Long userId) {
         LoginUser loginUser = LoginUserContextHandler.getLoginUser();
 
         UserEntity userEntity = getById(userId);
@@ -149,6 +146,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         setLoginUserPermsInfo(loginUser);
 
         LoginUserContextHandler.refreshLoginUser(loginUser);
+
+        return loginUser;
     }
 
     @Override
@@ -187,17 +186,28 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         loginUser.setRoles(roleNames);
 
         Set<PermissionEntity> permissionEntities = permissionService.getByUserId(loginUser.getUserId());
-        loginUser.setPermissions(permissionEntities.stream()
-                .map(PermissionEntity::getPermsKey)
-                .collect(Collectors.toSet()));
-        loginUser.setRoutes(permissionEntities.stream()
-                .filter(permissionEntity -> Objects.equals(permissionEntity.getType(), MenuType.PAGE))
-                .map(PermissionEntity::getUrl)
-                .collect(Collectors.toSet()));
-        loginUser.setButtons(permissionEntities.stream()
-                .filter(permissionEntity -> Objects.equals(permissionEntity.getType(), MenuType.BUTTON))
-                .map(PermissionEntity::getPermsKey)
-                .collect(Collectors.toSet()));
+        for (PermissionEntity pe : permissionEntities) {
+            Integer type = pe.getType();
+
+            if (StringUtils.isNotBlank(pe.getPermsKey())) {
+                String permsKey = pe.getPermsKey().trim();
+
+                loginUser.getStringPermissions().add(permsKey);
+                // 使用 WildcardPermission；若 permsKey 格式不合法
+                try {
+                    loginUser.getObjectPermissions().add(new WildcardPermission(permsKey));
+                } catch (Exception ignored) {
+                }
+
+                if (type != null && type == MenuType.BUTTON) {
+                    loginUser.getButtons().add(permsKey);
+                }
+            }
+
+            if (type != null && type == MenuType.CATALOG) {
+                loginUser.getRoutes().add(pe.getUrl().trim());
+            }
+        }
     }
 
     @Override

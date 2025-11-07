@@ -6,6 +6,7 @@ import com.supermap.common.util.StringUtils;
 import com.supermap.modules.security.service.CaptchaService;
 import com.supermap.modules.security.service.LoginService;
 import com.supermap.modules.sys.dto.UserLoginDTO;
+import com.supermap.modules.sys.service.UserService;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +27,8 @@ import java.io.IOException;
 public class LoginController {
 
     private final LoginService loginService;
+
+    private final UserService userService;
 
     private final CaptchaService captchaService;
 
@@ -71,7 +74,7 @@ public class LoginController {
     @Operation(summary = "登录用户信息")
     @GetMapping("/info")
     public R<LoginUser> getLoginUserinfo() {
-        LoginUser loginUser = LoginUserContextHandler.getLoginUser();
+        LoginUser loginUser = userService.refreshLoginUser(LoginUserContextHandler.getLoginUser().getUserId());
         return R.ok(loginUser);
     }
 

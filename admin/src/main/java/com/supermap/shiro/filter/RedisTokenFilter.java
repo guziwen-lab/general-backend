@@ -32,9 +32,6 @@ public class RedisTokenFilter extends BasicHttpAuthenticationFilter {
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
-        if (checkRequiresGuest(httpServletRequest))
-            return true;
-
         // 从请求中获取 token
         String token = getTokenFromRequest(httpServletRequest);
 
@@ -48,6 +45,7 @@ public class RedisTokenFilter extends BasicHttpAuthenticationFilter {
             SecurityUtils.getSubject().login(new RedisToken(new TokenUsernamePassword().setToken(token)));
             return true;
         } catch (Exception e) {
+            log.debug("认证失败", e);
             request.setAttribute("authFailReason", AUTH_INVALID);
             return false;
         }
@@ -108,11 +106,6 @@ public class RedisTokenFilter extends BasicHttpAuthenticationFilter {
             return false;
         }
         return super.preHandle(request, response);
-    }
-
-    private boolean checkRequiresGuest(HttpServletRequest httpServletRequest) {
-        String uri = httpServletRequest.getRequestURI();
-        return RequiresGuestUrlCollector.isExcluded(uri);
     }
 
 }
