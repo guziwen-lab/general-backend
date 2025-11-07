@@ -2,7 +2,6 @@ package com.supermap.modules.security.service.impl;
 
 import com.supermap.modules.security.service.LoginService;
 import com.supermap.modules.sys.dto.UserLoginDTO;
-import com.supermap.modules.sys.service.UserService;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
 import com.supermap.shiro.token.RedisToken;
