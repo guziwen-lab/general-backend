@@ -207,7 +207,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 }
             }
 
-            if (type != null && type == MenuType.CATALOG) {
+            if (type != null && type == MenuType.CATALOG && StringUtils.isNotBlank(pe.getUrl())) {
                 loginUser.getRoutes().add(pe.getUrl().trim());
             }
         }
