@@ -1,7 +1,7 @@
 package com.supermap.shiro;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.supermap.modules.sys.vo.UserVO;
+import com.supermap.modules.sys.entity.UserEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,10 +18,15 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class LoginUser extends UserVO implements AuthorizationInfo {
+public class LoginUser extends UserEntity implements AuthorizationInfo {
 
     @Getter
     private String token;
+
+    @Setter
+    @Getter
+    @JsonIgnore
+    private String password;
 
     private Set<String> stringPermissions = new HashSet<>();
 
