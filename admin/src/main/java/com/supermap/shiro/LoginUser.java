@@ -22,7 +22,6 @@ import java.util.Set;
 public class LoginUser extends UserVO implements AuthorizationInfo {
 
     @Getter
-    @Schema(title = "token")
     private String token;
 
     private Set<String> stringPermissions = new HashSet<>();
