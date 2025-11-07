@@ -5,6 +5,7 @@ import com.supermap.common.pojo.R;
 import com.supermap.modules.sys.dto.FileDTO;
 import com.supermap.modules.sys.entity.FileEntity;
 import com.supermap.modules.sys.service.FileService;
+import com.supermap.modules.sys.vo.FileUrlVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +39,13 @@ public class FileController {
     @PostMapping("/download/{id}")
     public void download(@PathVariable("id") Long id, HttpServletResponse response) {
         fileService.download(id, response);
+    }
+
+    @Operation(summary = "获取文件访问地址")
+    @GetMapping("/url/{fileId}")
+    public R<FileUrlVO> getUrl(@PathVariable("fileId") String fileId) {
+        FileUrlVO vo = fileService.getUrl(fileId);
+        return R.ok(vo);
     }
 
     @Operation(summary = "分页查询")

@@ -55,6 +55,7 @@ login:
     max-retry-count: 5
 file:
   base-path: /Users/guziwen/Java/temp/general-backend/file
+  external-url-prefix: http://localhost:8080/file
 logging:
   level:
     com.supermap: debug

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.supermap.modules.sys.dto.FileDTO;
 import com.supermap.modules.sys.dto.FileDownloadDTO;
 import com.supermap.modules.sys.entity.FileEntity;
+import com.supermap.modules.sys.vo.FileUrlVO;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,6 +47,10 @@ public interface FileService extends IService<FileEntity> {
     void decreaseRefCount(Long fileId);
 
     void deleteByRefcount();
+
+    FileUrlVO getUrl(Long fileId);
+
+    String getUrl(String filePath);
 
 }
 

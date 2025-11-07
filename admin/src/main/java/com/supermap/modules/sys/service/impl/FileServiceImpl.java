@@ -9,6 +9,7 @@ import com.supermap.modules.sys.dto.FileDTO;
 import com.supermap.modules.sys.dto.FileDownloadDTO;
 import com.supermap.modules.sys.entity.FileEntity;
 import com.supermap.modules.sys.service.FileService;
+import com.supermap.modules.sys.vo.FileUrlVO;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,9 @@ public class FileServiceImpl extends ServiceImpl<FileDao, FileEntity> implements
 
     @Value("${file.base-path}")
     private String basePath;
+
+    @Value("${file.external-url-prefix}")
+    private String externalUrlPrefix;
 
     private final Tika tika;
 
@@ -232,6 +236,25 @@ public class FileServiceImpl extends ServiceImpl<FileDao, FileEntity> implements
             FileUtils.del(fileEntity.getFilePath());
 
         removeByIds(list.stream().map(FileEntity::getId).toList());
+    }
+
+    @Override
+    public FileUrlVO getUrl(Long fileId) {
+        FileEntity fileEntity = getById(fileId);
+        if (fileEntity == null)
+            throw new RuntimeException("文件不存在");
+
+        String url = getUrl(fileEntity.getFilePath());
+
+        FileUrlVO vo = new FileUrlVO();
+        BeanUtils.copyProperties(fileEntity, vo);
+        vo.setUrl(url);
+        return vo;
+    }
+
+    @Override
+    public String getUrl(String filePath) {
+        return filePath.replaceFirst(getFilePath(), externalUrlPrefix + "/");
     }
 
 }
