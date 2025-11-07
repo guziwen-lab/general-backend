@@ -2,7 +2,6 @@ package com.supermap.shiro;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.supermap.modules.sys.vo.UserVO;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
