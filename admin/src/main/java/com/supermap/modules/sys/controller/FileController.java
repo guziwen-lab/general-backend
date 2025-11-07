@@ -43,7 +43,7 @@ public class FileController {
 
     @Operation(summary = "获取文件访问地址")
     @GetMapping("/url/{fileId}")
-    public R<FileUrlVO> getUrl(@PathVariable("fileId") String fileId) {
+    public R<FileUrlVO> getUrl(@PathVariable("fileId") Long fileId) {
         FileUrlVO vo = fileService.getUrl(fileId);
         return R.ok(vo);
     }
