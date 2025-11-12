@@ -51,11 +51,11 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionDao, Permission
 
     @Override
     public Long saveDTO(PermissionSaveDTO dto) {
-        PermissionEntity exists = getOne(new LambdaQueryWrapper<PermissionEntity>()
+        /*PermissionEntity exists = getOne(new LambdaQueryWrapper<PermissionEntity>()
                 .eq(PermissionEntity::getPermsKey, dto.getPermsKey()));
         if (exists != null) {
             throw new RuntimeException("权限key已存在");
-        }
+        }*/
 
         PermissionEntity permissionEntity = new PermissionEntity();
         BeanUtils.copyProperties(dto, permissionEntity);

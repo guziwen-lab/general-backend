@@ -192,6 +192,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         for (PermissionEntity pe : permissionEntities) {
             Integer type = pe.getType();
 
+            loginUser.getPermissionNames().add(pe.getName());
+
             if (StringUtils.isNotBlank(pe.getPermsKey())) {
                 String permsKey = pe.getPermsKey().trim();
 
@@ -201,14 +203,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                     loginUser.getObjectPermissions().add(new WildcardPermission(permsKey));
                 } catch (Exception ignored) {
                 }
-
-                if (type != null && type == MenuType.BUTTON) {
-                    loginUser.getButtons().add(permsKey);
-                }
             }
 
-            if (type != null && type == MenuType.CATALOG && StringUtils.isNotBlank(pe.getUrl())) {
-                loginUser.getRoutes().add(pe.getUrl().trim());
+            if (type != null && type == MenuType.BUTTON) {
+                loginUser.getButtons().add(pe.getName());
             }
         }
     }

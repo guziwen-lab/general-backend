@@ -39,11 +39,18 @@ public class PermissionEntity {
 	@Schema(title = "菜单url")
 	private String url;
 
+    @TableField(updateStrategy = FieldStrategy.ALWAYS, insertStrategy = FieldStrategy.ALWAYS)
 	@Schema(title = "菜单类型 (0: 目录; 1: 页面; 2: 按钮)")
 	private Integer type;
 
 	@Schema(title = "菜单图标")
 	private String icon;
+
+    @Schema(title = "是否隐藏 (0: 否; 1: 是)")
+    private Integer hidden;
+
+    @Schema(title = "打开方式 (0: 内部打开; 1: 外部打开)")
+    private Integer openStyle;
 
 	@Schema(title = "创建时间")
 	private Timestamp createTime;

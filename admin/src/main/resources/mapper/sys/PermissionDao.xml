@@ -41,10 +41,24 @@
             version     = sys_permission.version + 1
         from (values
         <foreach collection="permissionEntities" item="item" separator=",">
-            (#{item.permissionId}, #{item.version}, #{item.parentId}, #{item.level}, #{item.sort})
+            (#{item.permissionId}::bigint,
+             #{item.version}::int,
+             #{item.parentId}::bigint,
+             #{item.level}::int,
+             #{item.sort}::int)
         </foreach>
         ) as tmp(id, version, parent_id, level, sort)
         where sys_permission.permission_id = tmp.id
           and sys_permission.version = tmp.version
     </update>
+
+    <select id="getLoginUserRoute" resultMap="permissionMap">
+        select distinct p.*
+        from sys_permission p
+                 join sys_role_permission_relation rp on p.permission_id = rp.permission_id
+                 join sys_user_role_relation ur on rp.role_id = ur.role_id
+        where ur.user_id = #{userId}
+          and type in (0, 1)
+        order by p.sort
+    </select>
 </mapper>

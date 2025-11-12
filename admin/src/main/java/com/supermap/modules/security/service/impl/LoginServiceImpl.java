@@ -1,7 +1,10 @@
 package com.supermap.modules.security.service.impl;
 
 import com.supermap.modules.security.service.LoginService;
+import com.supermap.modules.security.vo.RouteVO;
 import com.supermap.modules.sys.dto.UserLoginDTO;
+import com.supermap.modules.sys.entity.PermissionEntity;
+import com.supermap.modules.sys.service.impl.PermissionServiceImpl;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
 import com.supermap.shiro.token.RedisToken;
@@ -13,6 +16,11 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * @author gzw
  */
@@ -21,6 +29,8 @@ import org.springframework.stereotype.Service;
 public class LoginServiceImpl implements LoginService {
 
     private final RedisTemplate<String, String> redisTemplate;
+
+    private final PermissionServiceImpl permissionService;
 
     @Override
     public String login(UserLoginDTO user) {
@@ -37,6 +47,42 @@ public class LoginServiceImpl implements LoginService {
     public void logout(String token) {
         redisTemplate.delete(RedisTokenUtils.getKey(token));
         LoginUserContextHandler.logout();
+    }
+
+    @Override
+    public List<RouteVO> getLoginUserRoute(Long userId) {
+        List<PermissionEntity> perms = permissionService.getBaseMapper().getLoginUserRoute(userId);
+        List<RouteVO> list = perms.stream().map(item -> {
+            RouteVO route = new RouteVO();
+            route.setPermissionId(item.getPermissionId());
+            route.setParentId(item.getParentId());
+            route.setPath(item.getUrl());
+            route.setName(item.getName());
+
+            route.setTitle(item.getName());
+            route.setHidden(item.getHidden() != null && item.getHidden() == 1);
+            route.setIcon(item.getIcon());
+            route.setOpenStyle(item.getOpenStyle());
+
+            return route;
+        }).toList();
+
+        List<RouteVO> root = list.stream()
+                .filter(item -> item.getParentId() == null)
+                .toList();
+
+        root.forEach(routeVO -> buildRoute(routeVO, list));
+
+        return root;
+    }
+
+    private void buildRoute(RouteVO root, List<RouteVO> all) {
+        List<RouteVO> children = all.stream()
+                .filter(item -> Objects.equals(item.getParentId(), root.getPermissionId()))
+                .toList();
+        root.setChildren(children);
+
+        children.forEach(item -> buildRoute(item, all));
     }
 
     private LoginUser doLogin(TokenUsernamePassword tokenUsernamePassword) {

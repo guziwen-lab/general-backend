@@ -30,8 +30,7 @@ public class PermissionSaveDTO {
 	@Schema(title = "权限/菜单名称")
 	private String name;
 
-    @NotBlank(groups = Add.class)
-	@Schema(title = "权限key")
+    @Schema(title = "权限key")
 	private String permsKey;
 
 	@Schema(title = "菜单路径 (树id的路径，主要用于存放从根节点到当前树的父节点的路径)")
@@ -54,6 +53,12 @@ public class PermissionSaveDTO {
 
 	@Schema(title = "菜单图标")
 	private String icon;
+
+    @Schema(title = "是否隐藏 (0: 否; 1: 是)")
+    private Integer hidden;
+
+    @Schema(title = "打开方式 (0: 内部打开; 1: 外部打开)")
+    private Integer openStyle;
 
 	@Schema(title = "创建时间")
 	private Timestamp createTime;

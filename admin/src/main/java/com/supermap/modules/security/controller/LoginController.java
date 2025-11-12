@@ -5,6 +5,7 @@ import com.supermap.common.pojo.R;
 import com.supermap.common.util.StringUtils;
 import com.supermap.modules.security.service.CaptchaService;
 import com.supermap.modules.security.service.LoginService;
+import com.supermap.modules.security.vo.RouteVO;
 import com.supermap.modules.sys.dto.UserLoginDTO;
 import com.supermap.modules.sys.service.UserService;
 import com.supermap.shiro.LoginUser;
@@ -17,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author gzw
@@ -73,9 +75,16 @@ public class LoginController {
 
     @Operation(summary = "登录用户信息")
     @GetMapping("/info")
-    public R<LoginUser> getLoginUserinfo() {
+    public R<LoginUser> getLoginUserInfo() {
         LoginUser loginUser = userService.refreshLoginUser(LoginUserContextHandler.getLoginUser().getUserId());
         return R.ok(loginUser);
+    }
+
+    @Operation(summary = "登录用户路由")
+    @GetMapping("/route")
+    public R<List<RouteVO>> getLoginUserRoute() {
+        List<RouteVO> routes = loginService.getLoginUserRoute(LoginUserContextHandler.getLoginUser().getUserId());
+        return R.ok(routes);
     }
 
 }

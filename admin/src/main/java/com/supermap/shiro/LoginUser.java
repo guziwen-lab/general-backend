@@ -30,13 +30,13 @@ public class LoginUser extends UserEntity implements AuthorizationInfo {
 
     private Set<String> stringPermissions = new HashSet<>();
 
+    @Getter
+    private Set<String> permissionNames = new HashSet<>();
+
     @JsonIgnore
     private Set<Permission> objectPermissions = new HashSet<>();
 
     private Set<String> roles = new HashSet<>();
-
-    @Getter
-    private Set<String> routes = new HashSet<>();
 
     @Getter
     private Set<String> buttons = new HashSet<>();
