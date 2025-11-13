@@ -254,7 +254,13 @@ public class FileServiceImpl extends ServiceImpl<FileDao, FileEntity> implements
 
     @Override
     public String getUrl(String filePath) {
-        return filePath.replaceFirst(getFilePath(), externalUrlPrefix + "/");
+        /*
+         * nginx 配置映射目录
+         * location /file {
+         *     alias /Users/guziwen/Java/temp/general-backend/file;
+         * }
+         */
+        return filePath.replaceFirst(basePath, externalUrlPrefix);
     }
 
 }
