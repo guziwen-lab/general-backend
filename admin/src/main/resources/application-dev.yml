@@ -47,6 +47,10 @@ thread:
   keep-alive-time: 10000
 sm3:
   key: 123
+jwt:
+  secret: 4A895E3B5653580CE7E8DD610FDB39C62136F132
+  expire: 60480000  # 7天
+  header: '{ "alg": "HS256", "typ": "JWT" }'
 login:
   retry:
     max-retry-count: 5

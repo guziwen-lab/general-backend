@@ -23,6 +23,9 @@ public class UserVO extends UserEntity {
 	@Schema(title = "密码")
 	private String password;
 
+    @Schema(title = "角色名称")
+    private String roleNames;
+
     @Schema(title = "角色")
     private List<RoleEntity> roleEntities;
 

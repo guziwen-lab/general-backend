@@ -24,6 +24,7 @@ import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import lombok.AllArgsConstructor;
+import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.permission.WildcardPermission;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -31,10 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Service("userService")
 @AllArgsConstructor
@@ -188,19 +186,23 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         Set<String> roleNames = roleService.getRoleNamesByUserId(loginUser.getUserId());
         loginUser.setRoles(roleNames);
 
+        Set<String> permissionNames = new HashSet<>();
+        Set<String> stringPermissions = new HashSet<>();
+        Set<Permission> objectPermissions = new HashSet<>();
+
         Set<PermissionEntity> permissionEntities = permissionService.getByUserId(loginUser.getUserId());
         for (PermissionEntity pe : permissionEntities) {
             Integer type = pe.getType();
 
-            loginUser.getPermissionNames().add(pe.getName());
+            permissionNames.add(pe.getName());
 
             if (StringUtils.isNotBlank(pe.getPermsKey())) {
                 String permsKey = pe.getPermsKey().trim();
 
-                loginUser.getStringPermissions().add(permsKey);
+                stringPermissions.add(permsKey);
                 // 使用 WildcardPermission；若 permsKey 格式不合法
                 try {
-                    loginUser.getObjectPermissions().add(new WildcardPermission(permsKey));
+                    objectPermissions.add(new WildcardPermission(permsKey));
                 } catch (Exception ignored) {
                 }
             }
@@ -209,6 +211,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 loginUser.getButtons().add(pe.getName());
             }
         }
+
+        loginUser.setPermissionNames(permissionNames);
+        loginUser.setStringPermissions(stringPermissions);
+        loginUser.setObjectPermissions(objectPermissions);
     }
 
     @Override
