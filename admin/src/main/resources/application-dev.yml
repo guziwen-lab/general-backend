@@ -52,7 +52,7 @@ login:
     max-retry-count: 5
 file:
   base-path: /Users/guziwen/Java/temp/网络查控/file
-  external-url-prefix: http://localhost:8080/file
+  external-url-prefix: http://localhost/file
 logging:
   level:
     com.supermap: debug
