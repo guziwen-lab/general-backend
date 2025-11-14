@@ -25,8 +25,6 @@ public interface UserService extends IService<UserEntity> {
 
     void updateDTO(UserSaveDTO dto);
 
-    LoginUser refreshLoginUser(Long userId, String token);
-
     void reset(String username);
 
     void resetAll();

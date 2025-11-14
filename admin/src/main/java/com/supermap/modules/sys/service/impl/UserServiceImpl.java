@@ -46,6 +46,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     private final RedisTemplate<String, String> redisTemplate;
 
+    private final LoginUserService loginUserService;
+
     @Override
     public Page<UserVO> queryPage(UserDTO dto) {
         return baseMapper.page(dto.page(), dto);
@@ -114,14 +116,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         }
 
         // 修改了用户信息要更新这个用户登录的信息
-        refreshLoginUserInfoByUserId(dto.getUserId());
-    }
-
-    private void refreshLoginUserInfoByUserId(Long userId) {
-        List<LoginLogEntity> loginLogEntities = loginLogService.getOnlineByUserId(userId);
-        for (LoginLogEntity loginLogEntity : loginLogEntities) {
-            refreshLoginUser(loginLogEntity.getUserId(), loginLogEntity.getToken());
-        }
+        loginUserService.refreshLoginUserInfoByUserId(dto.getUserId());
     }
 
     private void saveRoleByUserId(Long userId, List<Long> roleIds) {
@@ -143,22 +138,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                     return userRoleRelationEntity;
                 }).toList();
         userRoleRelationService.saveBatch(relationEntities);
-    }
-
-    @Override
-    public LoginUser refreshLoginUser(Long userId, String token) {
-        LoginUser loginUser = new LoginUser();
-        UserEntity userEntity = getById(userId);
-        BeanUtils.copyProperties(userEntity, loginUser);
-        setLoginUserPermsInfo(loginUser);
-        loginUser.setToken(token);
-
-        LoginUserContextHandler.refreshLoginUser(loginUser);
-
-        // 更新登录时间
-        loginLogService.updateLoginTimeByToken(token);
-
-        return loginUser;
     }
 
     @Override

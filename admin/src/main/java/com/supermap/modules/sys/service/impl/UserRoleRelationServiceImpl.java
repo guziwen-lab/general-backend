@@ -25,4 +25,14 @@ public class UserRoleRelationServiceImpl extends ServiceImpl<UserRoleRelationDao
         remove(new LambdaQueryWrapper<UserRoleRelationEntity>().in(UserRoleRelationEntity::getUserId, userIds));
     }
 
+    @Override
+    public List<Long> getUserIdByRoleId(Long roleId) {
+        return list(new LambdaQueryWrapper<UserRoleRelationEntity>()
+                .eq(UserRoleRelationEntity::getRoleId, roleId)
+                .select(UserRoleRelationEntity::getUserId))
+                .stream()
+                .map(UserRoleRelationEntity::getUserId)
+                .toList();
+    }
+
 }

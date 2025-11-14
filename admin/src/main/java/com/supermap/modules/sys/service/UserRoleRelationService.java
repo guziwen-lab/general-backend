@@ -2,6 +2,7 @@ package com.supermap.modules.sys.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.supermap.modules.sys.entity.UserRoleRelationEntity;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -15,6 +16,8 @@ public interface UserRoleRelationService extends IService<UserRoleRelationEntity
     void removeByUserId(Long userId);
 
     void removeByUserIds(List<Long> userIds);
+
+    List<Long> getUserIdByRoleId(Long roleId);
 
 }
 
