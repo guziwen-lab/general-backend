@@ -17,7 +17,6 @@ import com.supermap.modules.sys.vo.UserVO;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
 import com.supermap.shiro.encoder.PasswordEncoder;
-import com.supermap.shiro.util.RedisTokenUtils;
 import lombok.AllArgsConstructor;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.permission.WildcardPermission;
