@@ -14,7 +14,6 @@ import com.supermap.modules.sys.entity.RolePermissionRelationEntity;
 import com.supermap.modules.sys.service.LoginUserService;
 import com.supermap.modules.sys.service.RolePermissionRelationService;
 import com.supermap.modules.sys.service.RoleService;
-import com.supermap.modules.sys.service.UserRoleRelationService;
 import com.supermap.modules.sys.vo.RoleVO;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,8 +30,6 @@ import java.util.Set;
 public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements RoleService {
 
     private final RolePermissionRelationService rolePermissionRelationService;
-
-    private final UserRoleRelationService userRoleRelationService;
 
     private final PermissionServiceImpl permissionService;
 
