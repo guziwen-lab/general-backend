@@ -74,7 +74,8 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogDao, LoginLogEntity
 
     @Override
     public List<LoginLogEntity> getOnlineByRoleId(Long roleId) {
-        return List.of();
+        long l = System.currentTimeMillis() - AuthenticationConstant.DEFAULT_EXPIRE_SECONDS * 1000;
+        return baseMapper.getOnlineByRoleId(roleId, new Timestamp(l));
     }
 
 }

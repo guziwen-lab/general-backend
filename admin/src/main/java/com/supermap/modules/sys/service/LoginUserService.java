@@ -9,6 +9,8 @@ public interface LoginUserService {
 
     void refreshLoginUserInfoByUserId(Long userId);
 
+    void refreshLoginUserInfoByRoleId(Long roleId);
+
     LoginUser refreshLoginUser(Long userId, String token);
 
 }

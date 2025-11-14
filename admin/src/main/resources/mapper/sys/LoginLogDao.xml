@@ -12,5 +12,12 @@
         <result property="loginTime" column="login_time"/>
     </resultMap>
 
-
+    <select id="getOnlineByRoleId" resultMap="loginLogMap">
+        select *
+        from sys_login_log l
+                 left join sys_user_role_relation r on r.user_id = l.user_id
+        where r.role_id = #{roleId}
+        and l.is_force_logout = false
+        and l.login_time >= #{loginTime}
+    </select>
 </mapper>

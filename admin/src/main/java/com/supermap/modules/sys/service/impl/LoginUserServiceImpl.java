@@ -43,6 +43,14 @@ public class LoginUserServiceImpl implements LoginUserService {
     }
 
     @Override
+    public void refreshLoginUserInfoByRoleId(Long roleId) {
+        List<LoginLogEntity> loginLogEntities = loginLogService.getOnlineByRoleId(roleId);
+        for (LoginLogEntity loginLogEntity : loginLogEntities) {
+            refreshLoginUser(loginLogEntity.getUserId(), loginLogEntity.getToken());
+        }
+    }
+
+    @Override
     public LoginUser refreshLoginUser(Long userId, String token) {
         LoginUser loginUser = new LoginUser();
         UserEntity userEntity = userService.getById(userId);

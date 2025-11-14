@@ -105,10 +105,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
         savePermissionByRoleId(dto.getRoleId(), dto.getPermissionIds());
 
         // 修改了角色信息要更新这个角色对应的所有用户的登录信息
-        List<Long> userIds = userRoleRelationService.getUserIdByRoleId(dto.getRoleId());
-        for (Long userId : userIds) {
-            loginUserService.refreshLoginUserInfoByUserId(userId);
-        }
+        loginUserService.refreshLoginUserInfoByRoleId(dto.getRoleId());
     }
 
     @Override
