@@ -2,6 +2,7 @@ package com.supermap.modules.sys.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.supermap.modules.sys.dto.SearchDTO;
 import com.supermap.modules.sys.entity.DictEntity;
 import com.supermap.modules.sys.dto.DictDTO;
 import com.supermap.modules.sys.dto.DictSaveDTO;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public interface DictService extends IService<DictEntity> {
 
-    Page<DictEntity> queryPage(DictDTO dto);
+    Page<DictEntity> queryPage(SearchDTO dto);
 
     Long saveDTO(DictSaveDTO dto);
 

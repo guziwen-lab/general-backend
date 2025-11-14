@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.supermap.common.pojo.R;
 import com.supermap.common.valid.group.Add;
 import com.supermap.common.valid.group.Update;
-import com.supermap.modules.sys.dto.RoleDTO;
 import com.supermap.modules.sys.dto.RoleSaveDTO;
+import com.supermap.modules.sys.dto.SearchDTO;
 import com.supermap.modules.sys.entity.RoleEntity;
 import com.supermap.modules.sys.service.RoleService;
 import com.supermap.modules.sys.vo.RoleVO;
@@ -42,7 +42,7 @@ public class RoleController {
 
     @Operation(summary = "列表")
     @PostMapping("/list")
-    public R<Page<RoleEntity>> list(@RequestBody RoleDTO dto) {
+    public R<Page<RoleEntity>> list(@RequestBody SearchDTO dto) {
         Page<RoleEntity> page = roleService.queryPage(dto);
         return R.ok(page);
     }

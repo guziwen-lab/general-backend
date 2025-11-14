@@ -2,7 +2,7 @@ package com.supermap.modules.sys.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.supermap.modules.sys.dto.RoleDTO;
+import com.supermap.modules.sys.dto.SearchDTO;
 import com.supermap.modules.sys.entity.RoleEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -22,6 +22,6 @@ public interface RoleDao extends BaseMapper<RoleEntity> {
 
     List<RoleEntity> getRoleByUserId(@Param("userId") Long userId);
 
-    Page<RoleEntity> page(Page<Object> page, @Param("dto") RoleDTO dto);
+    Page<RoleEntity> page(Page<Object> page, @Param("dto") SearchDTO dto);
 
 }

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.supermap.modules.sys.dto.SearchDTO;
 import com.supermap.modules.sys.entity.DictItemEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +33,7 @@ public class DictController {
 
     private final DictService dictService;
 
-    @Operation(summary = "树形列表")
+    @Operation(summary = "字典项树形列表")
     @PostMapping("/tree")
     public R<List<DictItemEntity>> tree(@RequestBody @Validated DictDTO dto) {
         List<DictItemEntity> page = dictService.tree(dto);
@@ -41,7 +42,7 @@ public class DictController {
 
     @Operation(summary = "分页查询")
     @PostMapping("/page")
-    public R<Page<DictEntity>> page(@RequestBody DictDTO dto) {
+    public R<Page<DictEntity>> page(@RequestBody SearchDTO dto) {
         Page<DictEntity> page = dictService.queryPage(dto);
         return R.ok(page);
     }

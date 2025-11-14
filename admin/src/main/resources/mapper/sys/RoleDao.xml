@@ -33,10 +33,11 @@
         <where>
             <if test="dto.keyword != null and dto.keyword != ''">
                 and (r.role_name like concat('%', #{dto.keyword}, '%')
-                or r.remark like concat('%', #{dto.keyword}, '%'))
+                or r.remark like concat('%', #{dto.keyword}, '%')
                 <if test="dto.keyword.matches('^\\d+$')">
                     or r.role_id = CAST(#{dto.keyword} AS BIGINT)
                 </if>
+                )
             </if>
             <if test="dto.startTime != null">
                 and r.create_time &gt;= #{dto.startTime}

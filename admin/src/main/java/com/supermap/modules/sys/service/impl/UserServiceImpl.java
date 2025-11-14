@@ -9,7 +9,7 @@ import com.supermap.common.util.BeanUtils;
 import com.supermap.common.util.CollectionUtils;
 import com.supermap.common.util.StringUtils;
 import com.supermap.modules.sys.dao.UserDao;
-import com.supermap.modules.sys.dto.UserDTO;
+import com.supermap.modules.sys.dto.SearchDTO;
 import com.supermap.modules.sys.dto.UserSaveDTO;
 import com.supermap.modules.sys.entity.*;
 import com.supermap.modules.sys.service.*;
@@ -48,7 +48,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     private final LoginUserService loginUserService;
 
     @Override
-    public Page<UserVO> queryPage(UserDTO dto) {
+    public Page<UserVO> queryPage(SearchDTO dto) {
         return baseMapper.page(dto.page(), dto);
     }
 

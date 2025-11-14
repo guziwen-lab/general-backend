@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.supermap.common.pojo.R;
 import com.supermap.common.valid.group.Add;
 import com.supermap.common.valid.group.Update;
-import com.supermap.modules.sys.dto.UserDTO;
+import com.supermap.modules.sys.dto.SearchDTO;
 import com.supermap.modules.sys.dto.UserSaveDTO;
 import com.supermap.modules.sys.service.UserService;
 import com.supermap.modules.sys.vo.UserVO;
@@ -34,7 +34,7 @@ public class UserController {
     @RequiresPermissions("sys:user:select")
     @Operation(summary = "分页查询用户")
     @PostMapping("/list")
-    public R<Page<UserVO>> list(@RequestBody UserDTO dto) {
+    public R<Page<UserVO>> list(@RequestBody SearchDTO dto) {
         Page<UserVO> page = userService.queryPage(dto);
         return R.ok(page);
     }

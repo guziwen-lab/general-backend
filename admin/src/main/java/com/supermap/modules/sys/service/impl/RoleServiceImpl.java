@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.supermap.common.util.BeanUtils;
 import com.supermap.common.util.CollectionUtils;
 import com.supermap.modules.sys.dao.RoleDao;
-import com.supermap.modules.sys.dto.RoleDTO;
+import com.supermap.modules.sys.dto.SearchDTO;
 import com.supermap.modules.sys.dto.RoleSaveDTO;
 import com.supermap.modules.sys.entity.PermissionEntity;
 import com.supermap.modules.sys.entity.RoleEntity;
@@ -36,7 +36,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
     private final LoginUserService loginUserService;
 
     @Override
-    public Page<RoleEntity> queryPage(RoleDTO dto) {
+    public Page<RoleEntity> queryPage(SearchDTO dto) {
         return baseMapper.page(dto.page(), dto);
     }
 

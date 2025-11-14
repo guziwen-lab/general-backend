@@ -2,7 +2,7 @@ package com.supermap.modules.sys.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.supermap.modules.sys.dto.UserDTO;
+import com.supermap.modules.sys.dto.SearchDTO;
 import com.supermap.modules.sys.dto.UserSaveDTO;
 import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.vo.UserVO;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface UserService extends IService<UserEntity> {
 
-    Page<UserVO> queryPage(UserDTO dto);
+    Page<UserVO> queryPage(SearchDTO dto);
 
     UserEntity getByUsername(String username);
 

@@ -19,10 +19,11 @@
         <where>
             <if test="dto.keyword != null and dto.keyword != ''">
                 and (u.username like concat('%', #{dto.keyword}, '%')
-                or u.nickname like concat('%', #{dto.keyword}, '%'))
+                or u.nickname like concat('%', #{dto.keyword}, '%')
                 <if test="dto.keyword.matches('^\\d+$')">
                     or u.user_id = CAST(#{dto.keyword} AS BIGINT)
                 </if>
+                )
             </if>
             <if test="dto.startTime != null">
                 and u.create_time &gt;= #{dto.startTime}

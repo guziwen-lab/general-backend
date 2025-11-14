@@ -2,7 +2,7 @@ package com.supermap.modules.sys.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.supermap.modules.sys.dto.RoleDTO;
+import com.supermap.modules.sys.dto.SearchDTO;
 import com.supermap.modules.sys.dto.RoleSaveDTO;
 import com.supermap.modules.sys.entity.RoleEntity;
 import com.supermap.modules.sys.vo.RoleVO;
@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public interface RoleService extends IService<RoleEntity> {
 
-    Page<RoleEntity> queryPage(RoleDTO dto);
+    Page<RoleEntity> queryPage(SearchDTO dto);
 
     Set<String> getRoleNamesByUserId(Long userId);
 

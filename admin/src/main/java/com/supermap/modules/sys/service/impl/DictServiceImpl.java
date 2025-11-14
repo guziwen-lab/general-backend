@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.supermap.modules.sys.dao.DictDao;
 import com.supermap.modules.sys.entity.DictEntity;
 import com.supermap.modules.sys.service.DictService;
+import com.supermap.modules.sys.dto.SearchDTO;
 import com.supermap.modules.sys.dto.DictDTO;
 import com.supermap.modules.sys.dto.DictSaveDTO;
 
@@ -26,12 +27,15 @@ public class DictServiceImpl extends ServiceImpl<DictDao, DictEntity> implements
     private DictItemService dictItemService;
 
     @Override
-    public Page<DictEntity> queryPage(DictDTO dto) {
-        LambdaQueryWrapper<DictEntity> wrapper = new LambdaQueryWrapper<>();
+    public Page<DictEntity> queryPage(SearchDTO dto) {
+        /*LambdaQueryWrapper<DictEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.ge(dto.getStartTime() != null, DictEntity::getCreateTime, dto.getStartTime());
         wrapper.le(dto.getEndTime() != null, DictEntity::getCreateTime, dto.getEndTime());
         wrapper.like(StringUtils.isNotBlank(dto.getName()), DictEntity::getName, dto.getName());
-        return page(dto.page(), wrapper);
+        wrapper.orderByDesc(DictEntity::getCreateTime);
+        return page(dto.page(), wrapper);*/
+
+        return baseMapper.page(dto.page(), dto);
     }
 
     @Override

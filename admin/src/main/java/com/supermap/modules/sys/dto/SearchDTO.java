@@ -8,14 +8,14 @@ import lombok.EqualsAndHashCode;
 import java.sql.Timestamp;
 
 /**
- * 用户表
+ * 分页查询搜索DTO
  *
  * @author gzw
  */
 @EqualsAndHashCode(callSuper = true)
-@Schema(title = "用户表")
+@Schema(title = "分页查询搜索DTO")
 @Data
-public class UserDTO extends PageParam {
+public class SearchDTO extends PageParam {
 
 	@Schema(title = "开始时间")
 	private Timestamp startTime;
