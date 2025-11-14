@@ -2,6 +2,7 @@ package com.supermap.modules.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.supermap.common.constant.AuthenticationConstant;
 import com.supermap.common.util.BeanUtils;
 import com.supermap.common.util.StringUtils;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,9 @@ import com.supermap.modules.sys.entity.LoginLogEntity;
 import com.supermap.modules.sys.service.LoginLogService;
 import com.supermap.modules.sys.dto.LoginLogDTO;
 import com.supermap.modules.sys.dto.LoginLogSaveDTO;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 @Service("loginLogService")
 public class LoginLogServiceImpl extends ServiceImpl<LoginLogDao, LoginLogEntity> implements LoginLogService {
@@ -38,17 +42,40 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogDao, LoginLogEntity
     }
 
     @Override
-    public void updateByToken(LoginLogEntity loginLogEntity) {
-        String token = loginLogEntity.getToken();
-        if (StringUtils.isEmpty(token))
-            throw new RuntimeException("token不能为空");
-
+    public void updateLoginTimeByToken(String token) {
+        LoginLogEntity loginLogEntity = new LoginLogEntity();
+        loginLogEntity.setToken(token);
+        loginLogEntity.setLoginTime(new Timestamp(System.currentTimeMillis()));
         update(loginLogEntity, new LambdaQueryWrapper<LoginLogEntity>().eq(LoginLogEntity::getToken, token));
     }
 
     @Override
     public LoginLogEntity getByToken(String token) {
         return getOne(new LambdaQueryWrapper<LoginLogEntity>().eq(LoginLogEntity::getToken, token));
+    }
+
+    @Override
+    public List<LoginLogEntity> getOnline() {
+        long l = System.currentTimeMillis() - AuthenticationConstant.DEFAULT_EXPIRE_SECONDS * 1000;
+
+        return list(new LambdaQueryWrapper<LoginLogEntity>()
+                .eq(LoginLogEntity::getIsForceLogout, false)
+                .ge(LoginLogEntity::getLoginTime, new Timestamp(l)));
+    }
+
+    @Override
+    public List<LoginLogEntity> getOnlineByUserId(Long userId) {
+        long l = System.currentTimeMillis() - AuthenticationConstant.DEFAULT_EXPIRE_SECONDS * 1000;
+
+        return list(new LambdaQueryWrapper<LoginLogEntity>()
+                .eq(LoginLogEntity::getUserId, userId)
+                .eq(LoginLogEntity::getIsForceLogout, false)
+                .ge(LoginLogEntity::getLoginTime, new Timestamp(l)));
+    }
+
+    @Override
+    public List<LoginLogEntity> getOnlineByRoleId(Long roleId) {
+        return List.of();
     }
 
 }

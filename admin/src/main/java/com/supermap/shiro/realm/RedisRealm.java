@@ -22,6 +22,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisRealm extends AuthorizingRealm {
 
+    public static final String REALM_NAME = "redisRealm";
+
     private final ObjectProvider<UserService> userProvider;
 
     /**
@@ -44,7 +46,7 @@ public class RedisRealm extends AuthorizingRealm {
 
     @Override
     public String getName() {
-        return "redisRealm";
+        return REALM_NAME;
     }
 
     /**

@@ -17,6 +17,7 @@ import com.supermap.modules.sys.vo.UserVO;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
 import com.supermap.shiro.encoder.PasswordEncoder;
+import com.supermap.shiro.util.RedisTokenUtils;
 import lombok.AllArgsConstructor;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.permission.WildcardPermission;
@@ -112,6 +113,16 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             fileService.increaseRefCount(update.getAvatar());
             fileService.decreaseRefCount(user.getAvatar());
         }
+
+        // 修改了用户信息要更新这个用户登录的信息
+        refreshLoginUserInfoByUserId(dto.getUserId());
+    }
+
+    private void refreshLoginUserInfoByUserId(Long userId) {
+        List<LoginLogEntity> loginLogEntities = loginLogService.getOnlineByUserId(userId);
+        for (LoginLogEntity loginLogEntity : loginLogEntities) {
+            refreshLoginUser(loginLogEntity.getUserId(), loginLogEntity.getToken());
+        }
     }
 
     private void saveRoleByUserId(Long userId, List<Long> roleIds) {
@@ -135,20 +146,18 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         userRoleRelationService.saveBatch(relationEntities);
     }
 
-    public LoginUser refreshLoginUser(Long userId) {
-        LoginUser loginUser = LoginUserContextHandler.getLoginUser();
-
+    @Override
+    public LoginUser refreshLoginUser(Long userId, String token) {
+        LoginUser loginUser = new LoginUser();
         UserEntity userEntity = getById(userId);
         BeanUtils.copyProperties(userEntity, loginUser);
         setLoginUserPermsInfo(loginUser);
+        loginUser.setToken(token);
 
         LoginUserContextHandler.refreshLoginUser(loginUser);
 
-        // 更新登录日志
-        LoginLogEntity loginLogEntity = new LoginLogEntity();
-        loginLogEntity.setToken(loginUser.getToken());
-        loginLogEntity.setLoginTime(new Timestamp(System.currentTimeMillis()));
-        loginLogService.updateByToken(loginLogEntity);
+        // 更新登录时间
+        loginLogService.updateLoginTimeByToken(token);
 
         return loginUser;
     }

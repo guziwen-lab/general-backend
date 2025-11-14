@@ -6,6 +6,8 @@ import com.supermap.modules.sys.entity.LoginLogEntity;
 import com.supermap.modules.sys.dto.LoginLogDTO;
 import com.supermap.modules.sys.dto.LoginLogSaveDTO;
 
+import java.util.List;
+
 /**
  * 登录日志
  *
@@ -19,9 +21,15 @@ public interface LoginLogService extends IService<LoginLogEntity> {
 
     void updateDTOById(LoginLogSaveDTO dto);
 
-    void updateByToken(LoginLogEntity loginLogEntity);
+    void updateLoginTimeByToken(String token);
 
     LoginLogEntity getByToken(String token);
+
+    List<LoginLogEntity> getOnline();
+
+    List<LoginLogEntity> getOnlineByUserId(Long userId);
+
+    List<LoginLogEntity> getOnlineByRoleId(Long roleId);
 
 }
 

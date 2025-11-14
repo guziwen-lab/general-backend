@@ -77,7 +77,8 @@ public class LoginController {
     @Operation(summary = "登录用户信息")
     @GetMapping("/info")
     public R<LoginUser> getLoginUserInfo() {
-        LoginUser loginUser = userService.refreshLoginUser(LoginUserContextHandler.getLoginUser().getUserId());
+        LoginUser loginUser = LoginUserContextHandler.getLoginUser();
+        loginUser = userService.refreshLoginUser(loginUser.getUserId(), loginUser.getToken());
         return R.ok(loginUser);
     }
 
