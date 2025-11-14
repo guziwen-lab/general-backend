@@ -8,7 +8,6 @@ import com.supermap.modules.sys.service.UserService;
 import com.supermap.modules.sys.service.LoginUserService;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

@@ -15,7 +15,6 @@ import com.supermap.modules.sys.entity.*;
 import com.supermap.modules.sys.service.*;
 import com.supermap.modules.sys.vo.UserVO;
 import com.supermap.shiro.LoginUser;
-import com.supermap.shiro.LoginUserContextHandler;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import lombok.AllArgsConstructor;
 import org.apache.shiro.authz.Permission;
