@@ -13,6 +13,7 @@ import com.supermap.shiro.LoginUserContextHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class LoginController {
 
     @Operation(summary = "登录")
     @PostMapping(value = "/login")
-    public R<String> login(UserLoginDTO user, HttpServletResponse response) {
+    public R<String> login(UserLoginDTO user, HttpServletRequest request, HttpServletResponse response) {
         if (StringUtils.isEmpty(user.getUsername()) ||
                 StringUtils.isEmpty(user.getPassword()) ||
                 StringUtils.isEmpty(user.getCaptcha()) ||
@@ -54,7 +55,7 @@ public class LoginController {
         if (!flag)
             return R.error(BizCodeEnum.CAPTCHA_ERROR);
 
-        String token = loginService.login(user);
+        String token = loginService.login(user, request);
 
         Cookie cookie = new Cookie("token", token);
         cookie.setHttpOnly(true);

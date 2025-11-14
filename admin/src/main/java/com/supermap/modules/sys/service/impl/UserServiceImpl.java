@@ -11,14 +11,8 @@ import com.supermap.common.util.StringUtils;
 import com.supermap.modules.sys.dao.UserDao;
 import com.supermap.modules.sys.dto.UserDTO;
 import com.supermap.modules.sys.dto.UserSaveDTO;
-import com.supermap.modules.sys.entity.PermissionEntity;
-import com.supermap.modules.sys.entity.RoleEntity;
-import com.supermap.modules.sys.entity.UserEntity;
-import com.supermap.modules.sys.entity.UserRoleRelationEntity;
-import com.supermap.modules.sys.service.FileService;
-import com.supermap.modules.sys.service.PermissionService;
-import com.supermap.modules.sys.service.UserRoleRelationService;
-import com.supermap.modules.sys.service.UserService;
+import com.supermap.modules.sys.entity.*;
+import com.supermap.modules.sys.service.*;
 import com.supermap.modules.sys.vo.UserVO;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
@@ -47,6 +41,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     private final UserRoleRelationService userRoleRelationService;
 
     private final FileService fileService;
+
+    private final LoginLogService loginLogService;
 
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -147,6 +143,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         setLoginUserPermsInfo(loginUser);
 
         LoginUserContextHandler.refreshLoginUser(loginUser);
+
+        // 更新登录日志
+        LoginLogEntity loginLogEntity = new LoginLogEntity();
+        loginLogEntity.setToken(loginUser.getToken());
+        loginLogEntity.setLoginTime(new Timestamp(System.currentTimeMillis()));
+        loginLogService.updateByToken(loginLogEntity);
 
         return loginUser;
     }

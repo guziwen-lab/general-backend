@@ -2,6 +2,7 @@ package com.supermap.modules.security.service;
 
 import com.supermap.modules.security.vo.RouteVO;
 import com.supermap.modules.sys.dto.UserLoginDTO;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public interface LoginService {
 
-    String login(UserLoginDTO user);
+    String login(UserLoginDTO user, HttpServletRequest request);
 
     void logout(String token);
 

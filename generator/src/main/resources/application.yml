@@ -29,11 +29,11 @@ spring:
 #    password: 123456
     #PostgreSQL配置
     driverClassName: org.postgresql.Driver
-#    url: jdbc:postgresql://service.990304.xyz:5432/common_backend?useUnicode=true&characterEncoding=UTF-8
-    url: jdbc:postgresql://192.168.1.102:5432/production_center?currentSchema=public
+    url: jdbc:postgresql://service.990304.xyz:5432/common_backend?useUnicode=true&characterEncoding=UTF-8
+#    url: jdbc:postgresql://192.168.1.102:5432/production_center?currentSchema=public
     username: postgres
-  #    password: zYdWyb-rbzniq-8wofdO
-    password: Supermap@123
+    password: zYdWyb-rbzniq-8wofdO
+#    password: Supermap@123
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
