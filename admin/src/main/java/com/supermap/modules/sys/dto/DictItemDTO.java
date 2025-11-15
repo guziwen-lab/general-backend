@@ -34,6 +34,9 @@ public class DictItemDTO extends PageParam {
 	@Schema(title = "字典项名称")
 	private String name;
 
+    @Schema(title = "字典项编码")
+    private String code;
+
 	@Schema(title = "排序")
 	private Integer sort;
 

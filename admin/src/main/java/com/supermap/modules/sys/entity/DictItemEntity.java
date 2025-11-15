@@ -1,9 +1,6 @@
 package com.supermap.modules.sys.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -30,10 +27,14 @@ public class DictItemEntity {
 	private Long dictId;
 
 	@Schema(title = "上级字典项id")
+    @TableField(updateStrategy = FieldStrategy.ALWAYS, insertStrategy = FieldStrategy.ALWAYS)
 	private Long parentId;
 
 	@Schema(title = "字典项名称")
 	private String name;
+
+    @Schema(title = "字典项编码")
+    private String code;
 
 	@Schema(title = "排序")
 	private Integer sort;

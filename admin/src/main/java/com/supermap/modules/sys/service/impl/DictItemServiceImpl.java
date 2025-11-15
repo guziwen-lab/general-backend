@@ -6,7 +6,9 @@ import com.supermap.common.util.BeanUtils;
 import com.supermap.modules.sys.entity.DictEntity;
 import com.supermap.modules.sys.service.DictService;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -19,6 +21,7 @@ import com.supermap.modules.sys.dto.DictItemSaveDTO;
 import java.sql.Timestamp;
 import java.util.List;
 
+@Slf4j
 @Service("dictItemService")
 public class DictItemServiceImpl extends ServiceImpl<DictItemDao, DictItemEntity> implements DictItemService {
 
@@ -45,7 +48,12 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemDao, DictItemEntity
             dictItemEntity.setParentId(0L);
         dictItemEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
         dictItemEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        save(dictItemEntity);
+        try {
+            save(dictItemEntity);
+        } catch (DataIntegrityViolationException ex) {
+            log.debug("字典项编码或字典项名称已存在", ex);
+            throw new IllegalArgumentException("字典项编码或字典项名称已存在");
+        }
         return dictItemEntity.getDictItemId();
     }
 
@@ -65,19 +73,21 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemDao, DictItemEntity
     @Override
     public List<DictItemEntity> tree(Long dictId) {
         List<DictItemEntity> list = list(new LambdaQueryWrapper<>(DictItemEntity.class)
-                .eq(DictItemEntity::getDictId, dictId));
+                .eq(DictItemEntity::getDictId, dictId)
+                .orderByAsc(DictItemEntity::getSort)
+                .orderByAsc(DictItemEntity::getCreateTime));
 
         List<DictItemEntity> collect = list.stream()
                 .filter(dict -> dict.getParentId() == null || dict.getParentId().equals(0L))
                 .toList();
         collect.forEach(dict -> setChildren(dict, list));
 
-        return list;
+        return collect;
     }
 
     private void setChildren(DictItemEntity dict, List<DictItemEntity> list) {
         List<DictItemEntity> children = list.stream()
-                .filter(d -> d.getParentId().equals(dict.getDictId()))
+                .filter(d -> dict.getDictItemId().equals(d.getParentId()))
                 .toList();
         dict.getChildren().addAll(children);
         children.forEach(d -> setChildren(d, list));

@@ -31,6 +31,9 @@ public class DictItemSaveDTO {
     @Schema(title = "字典项名称")
     private String name;
 
+    @Schema(title = "字典项编码")
+    private String code;
+
     @NotNull(groups = {Add.class})
     @Schema(title = "排序")
     private Integer sort;
