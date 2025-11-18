@@ -3,7 +3,6 @@ package com.supermap.modules.sys.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.supermap.common.util.BeanUtils;
-import com.supermap.common.util.StringUtils;
 import com.supermap.modules.sys.vo.DepartmentVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
