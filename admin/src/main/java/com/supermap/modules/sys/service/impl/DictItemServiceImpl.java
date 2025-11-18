@@ -52,7 +52,7 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemDao, DictItemEntity
             save(dictItemEntity);
         } catch (DataIntegrityViolationException ex) {
             log.debug("字典项编码或字典项名称已存在", ex);
-            throw new IllegalArgumentException("字典项编码或字典项名称已存在");
+            throw new DataIntegrityViolationException("字典项编码或字典项名称已存在");
         }
         return dictItemEntity.getDictItemId();
     }

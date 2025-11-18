@@ -23,6 +23,8 @@ public enum BizCodeEnum {
     CAPTCHA_ERROR(10006, "验证码错误"),
 
     GEOSPATIAL_DATA_FAILED(20000, "空间数据校验失败"),
+
+    DUPLICATE_KEY_EXCEPTION(30000, "违反唯一约束"),
     ;
 
     private final int code;

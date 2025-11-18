@@ -4,6 +4,7 @@ import com.supermap.common.enumeration.BizCodeEnum;
 import com.supermap.common.pojo.R;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,13 +51,24 @@ public class GlobalExceptionControllerAdvice {
     /**
      * 处理未知异常
      *
+     * @param e {@link DataIntegrityViolationException dataIntegrityViolationException}
+     * @return R
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public R<Throwable> handleException(DataIntegrityViolationException e) {
+        log.error(e.getMessage(), e);
+        return R.error(BizCodeEnum.DUPLICATE_KEY_EXCEPTION.getCode(), e.getLocalizedMessage());
+    }
+
+    /**
+     * 处理未知异常
+     *
      * @param throwable {@link Throwable Throwable}
      * @return R
      */
     @ExceptionHandler(Throwable.class)
     public R<Throwable> handleException(Throwable throwable) {
-        if (log.isDebugEnabled())
-            log.error(throwable.getMessage(), throwable);
+        log.error(throwable.getMessage(), throwable);
         return R.error(BizCodeEnum.UNKNOWN_EXCEPTION.getCode(), throwable.getLocalizedMessage());
     }
 

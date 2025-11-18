@@ -75,7 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         try {
             save(userEntity);
         } catch (DataIntegrityViolationException ex) {
-            throw new IllegalArgumentException("用户名已存在");
+            throw new DataIntegrityViolationException("用户名已存在");
         }
 
         saveRoleByUserId(userEntity.getUserId(), dto.getRoleIds());
@@ -104,7 +104,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         try {
             updateById(update);
         } catch (DataIntegrityViolationException ex) {
-            throw new IllegalArgumentException("用户名已存在");
+            throw new DataIntegrityViolationException("用户名已存在");
         }
 
         saveRoleByUserId(dto.getUserId(), dto.getRoleIds());

@@ -62,7 +62,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
         try {
             save(roleEntity);
         } catch (DataIntegrityViolationException ex) {
-            throw new IllegalArgumentException("角色名已存在");
+            throw new DataIntegrityViolationException("角色名已存在");
         }
 
         savePermissionByRoleId(roleEntity.getRoleId(), dto.getPermissionIds());
