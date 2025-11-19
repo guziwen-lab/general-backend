@@ -37,7 +37,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     private final RoleServiceImpl roleService;
 
+    private final DepartmentService departmentService;
+
     private final UserRoleRelationService userRoleRelationService;
+
+    private final UserDepartmentRelationService userDepartmentRelationService;
 
     private final FileService fileService;
 
@@ -79,11 +83,33 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         }
 
         saveRoleByUserId(userEntity.getUserId(), dto.getRoleIds());
+        saveDepartmentByUserId(userEntity.getUserId(), dto.getDeptIds());
 
         if (userEntity.getAvatar() != null)
             fileService.increaseRefCount(userEntity.getAvatar());
 
         return userEntity.getUserId();
+    }
+
+    private void saveDepartmentByUserId(Long userId, List<Long> departmentIds) {
+        userDepartmentRelationService.removeByUserId(userId);
+
+        if (CollectionUtils.isEmpty(departmentIds))
+            return;
+
+        long count = departmentService.count(new LambdaQueryWrapper<DepartmentEntity>()
+                .in(DepartmentEntity::getId, departmentIds));
+        if (count != departmentIds.size())
+            throw new IllegalArgumentException("部门不存在");
+
+        List<UserDepartmentRelationEntity> relationEntities = departmentIds.stream()
+                .map(item -> {
+                    UserDepartmentRelationEntity userDepartmentRelationEntity = new UserDepartmentRelationEntity();
+                    userDepartmentRelationEntity.setUserId(userId);
+                    userDepartmentRelationEntity.setDepartmentId(item);
+                    return userDepartmentRelationEntity;
+                }).toList();
+        userDepartmentRelationService.saveBatch(relationEntities);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -108,6 +134,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         }
 
         saveRoleByUserId(dto.getUserId(), dto.getRoleIds());
+        saveDepartmentByUserId(dto.getUserId(), dto.getDeptIds());
 
         if (update.getAvatar() != null && !Objects.equals(user.getAvatar(), update.getAvatar())) {
             fileService.increaseRefCount(update.getAvatar());
@@ -213,6 +240,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
         List<RoleEntity> roles = roleService.getByUserId(userId);
         userVO.setRoleEntities(roles);
+
+        List<DepartmentEntity> departmentEntities = departmentService.getByUserId(userId);
+        userVO.setDepartmentEntities(departmentEntities);
 
         return userVO;
     }

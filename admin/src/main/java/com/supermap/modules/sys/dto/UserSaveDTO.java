@@ -35,4 +35,7 @@ public class UserSaveDTO {
     @Schema(title = "角色id")
     private List<Long> roleIds;
 
+    @Schema(title = "部门id")
+    private List<Long> deptIds;
+
 }

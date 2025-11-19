@@ -24,7 +24,9 @@ public interface DepartmentService extends IService<DepartmentEntity> {
 
     void updateDTOById(DepartmentSaveDTO dto);
 
-    List<DepartmentVO> tree();
+    List<DepartmentVO> tree(Boolean isActive);
+
+    List<DepartmentEntity> getByUserId(Long userId);
 
 }
 

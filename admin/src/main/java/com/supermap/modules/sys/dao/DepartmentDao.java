@@ -24,4 +24,6 @@ public interface DepartmentDao extends BaseMapper<DepartmentEntity> {
 
     void disableChildrenById(@Param("id") Long id);
 
+    List<DepartmentEntity> getDepartmentByUserId(@Param("userId") Long userId);
+
 }

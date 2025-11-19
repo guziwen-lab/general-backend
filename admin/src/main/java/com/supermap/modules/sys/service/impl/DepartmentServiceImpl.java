@@ -38,15 +38,15 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentDao, Department
     public Long saveDTO(DepartmentSaveDTO dto) {
         DepartmentEntity departmentEntity = new DepartmentEntity();
         BeanUtils.copyProperties(dto, departmentEntity);
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        departmentEntity.setCreatedAt(now);
+        departmentEntity.setUpdatedAt(now);
         try {
             save(departmentEntity);
         } catch (DataIntegrityViolationException ex) {
             log.debug("部门编码已存在", ex);
             throw new DataIntegrityViolationException("部门编码已存在");
         }
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        departmentEntity.setCreatedAt(now);
-        departmentEntity.setUpdatedAt(now);
         return departmentEntity.getId();
     }
 
@@ -65,8 +65,9 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentDao, Department
     }
 
     @Override
-    public List<DepartmentVO> tree() {
+    public List<DepartmentVO> tree(Boolean isActive) {
         List<DepartmentEntity> list = list(new LambdaQueryWrapper<DepartmentEntity>()
+                .eq(isActive != null, DepartmentEntity::getIsActive, isActive)
                 .orderByAsc(DepartmentEntity::getSortOrder)
                 .orderByAsc(DepartmentEntity::getCreatedAt));
         List<DepartmentVO> all = BeanUtils.copyToList(list, DepartmentVO.class);
@@ -76,6 +77,11 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentDao, Department
                 .toList();
         root.forEach(i -> setChildren(i, all));
         return root;
+    }
+
+    @Override
+    public List<DepartmentEntity> getByUserId(Long userId) {
+        return baseMapper.getDepartmentByUserId(userId);
     }
 
     private void setChildren(DepartmentVO departmentVO, List<DepartmentVO> all) {

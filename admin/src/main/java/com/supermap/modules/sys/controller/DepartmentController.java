@@ -34,8 +34,8 @@ public class DepartmentController {
 
     @Operation(summary = "树形全部")
     @GetMapping("/tree")
-    public R<List<DepartmentVO>> tree() {
-        List<DepartmentVO> page = departmentService.tree();
+    public R<List<DepartmentVO>> tree(@RequestParam(required = false) Boolean isActive) {
+        List<DepartmentVO> page = departmentService.tree(isActive);
         return R.ok(page);
     }
 

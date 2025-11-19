@@ -19,5 +19,7 @@ public interface UserDepartmentRelationService extends IService<UserDepartmentRe
 
     void updateDTOById(UserDepartmentRelationSaveDTO dto);
 
+    void removeByUserId(Long userId);
+
 }
 

@@ -36,4 +36,10 @@ public class UserDepartmentRelationServiceImpl extends ServiceImpl<UserDepartmen
         updateById(userDepartmentRelationEntity);
     }
 
+    @Override
+    public void removeByUserId(Long userId) {
+        remove(new LambdaQueryWrapper<UserDepartmentRelationEntity>()
+                .eq(UserDepartmentRelationEntity::getUserId, userId));
+    }
+
 }

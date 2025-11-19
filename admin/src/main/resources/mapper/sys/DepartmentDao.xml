@@ -128,4 +128,11 @@
             updated_at = NOW()
         WHERE id IN (SELECT id FROM dep_tree)
     </update>
+
+    <select id="getDepartmentByUserId" resultMap="departmentMap">
+        select distinct d.*
+        from sys_department d
+                 left join sys_user_department_relation r on d.id = r.department_id
+        where r.user_id = #{userId}
+    </select>
 </mapper>
