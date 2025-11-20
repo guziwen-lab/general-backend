@@ -45,8 +45,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     private final FileService fileService;
 
-    private final LoginLogService loginLogService;
-
     private final RedisTemplate<String, String> redisTemplate;
 
     private final LoginUserService loginUserService;
