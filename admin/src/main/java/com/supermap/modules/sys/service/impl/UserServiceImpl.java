@@ -250,6 +250,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(List<Long> userIds) {
+        List<Long> fileIds = list(new LambdaQueryWrapper<UserEntity>()
+                .in(UserEntity::getUserId, userIds))
+                .stream().map(UserEntity::getAvatar)
+                .filter(Objects::nonNull).toList();
+        fileService.delete(fileIds);
+
         removeByIds(userIds);
         userRoleRelationService.removeByUserIds(userIds);
     }

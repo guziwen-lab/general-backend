@@ -43,7 +43,7 @@ knife4j:
     language: zh_cn
     swagger-model-name: 实体类列表
 mybatis-plus:
-  mapper-locations: classpath:/mapper/**/*.xml
+  mapper-locations: classpath*:/mapper/**/*.xml
 thread:
   core-pool-size: 8
   maximum-pool-size: 8
