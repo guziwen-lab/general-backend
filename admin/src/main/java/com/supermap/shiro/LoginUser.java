@@ -41,6 +41,9 @@ public class LoginUser extends UserEntity implements AuthorizationInfo {
     @Getter
     private Set<String> buttons = new HashSet<>();
 
+    @Getter
+    private Set<String> departments = new HashSet<>();
+
     @Override
     public Set<String> getRoles() {
         return roles;

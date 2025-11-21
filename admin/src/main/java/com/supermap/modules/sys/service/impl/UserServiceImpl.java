@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("userService")
 @AllArgsConstructor
@@ -228,6 +229,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         loginUser.setPermissionNames(permissionNames);
         loginUser.setStringPermissions(stringPermissions);
         loginUser.setObjectPermissions(objectPermissions);
+
+        List<DepartmentEntity> departmentEntities = departmentService.getByUserId(loginUser.getUserId());
+        loginUser.setDepartments(departmentEntities.stream()
+                .map(DepartmentEntity::getCode)
+                .collect(Collectors.toSet()));
     }
 
     @Override
