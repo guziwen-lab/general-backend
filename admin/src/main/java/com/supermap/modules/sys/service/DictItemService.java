@@ -23,5 +23,9 @@ public interface DictItemService extends IService<DictItemEntity> {
 
     List<DictItemEntity> tree(Long dictId);
 
+    List<DictItemEntity> getByDictName(String dictName);
+
+    DictItemEntity getByCodeAndDictName(String code, String dictName);
+
 }
 

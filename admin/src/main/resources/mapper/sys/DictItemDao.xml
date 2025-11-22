@@ -14,5 +14,16 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
+    <select id="getByCodeAndDictName" resultMap="dictItemMap">
+        select *
+        from sys_dict_item
+        where dict_id = (select dict_id from sys_dict where name = #{dictName})
+        and code = #{code}
+    </select>
 
+    <select id="getByDictName" resultMap="dictItemMap">
+        select *
+        from sys_dict_item
+        where dict_id = (select dict_id from sys_dict where name = #{dictName})
+    </select>
 </mapper>

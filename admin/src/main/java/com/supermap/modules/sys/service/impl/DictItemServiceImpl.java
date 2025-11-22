@@ -85,6 +85,16 @@ public class DictItemServiceImpl extends ServiceImpl<DictItemDao, DictItemEntity
         return collect;
     }
 
+    @Override
+    public List<DictItemEntity> getByDictName(String dictName) {
+        return baseMapper.getByDictName(dictName);
+    }
+
+    @Override
+    public DictItemEntity getByCodeAndDictName(String code, String dictName) {
+        return baseMapper.getByCodeAndDictName(code, dictName);
+    }
+
     private void setChildren(DictItemEntity dict, List<DictItemEntity> list) {
         List<DictItemEntity> children = list.stream()
                 .filter(d -> dict.getDictItemId().equals(d.getParentId()))
