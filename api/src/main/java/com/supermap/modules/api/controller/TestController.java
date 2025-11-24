@@ -3,6 +3,8 @@ package com.supermap.modules.api.controller;
 import java.util.Arrays;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.supermap.shiro.LoginUser;
+import com.supermap.shiro.LoginUserContextHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -40,6 +42,8 @@ public class TestController {
     @Operation(summary = "根据主键查询")
     @GetMapping("/info/{id}")
     public R<TestEntity> info(@PathVariable("id") Long id) {
+        LoginUser loginUser = LoginUserContextHandler.getLoginUser();
+        System.out.println(loginUser.getUsername());
         TestEntity test = testService.getById(id);
         return R.ok(test);
     }
