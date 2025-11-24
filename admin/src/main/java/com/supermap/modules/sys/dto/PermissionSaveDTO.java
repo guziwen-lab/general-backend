@@ -47,8 +47,7 @@ public class PermissionSaveDTO {
 	@Schema(title = "菜单url")
 	private String url;
 
-    @NotBlank(groups = Add.class)
-	@Schema(title = "菜单类型 (0: 目录; 1: 页面; 2: 按钮)")
+    @Schema(title = "菜单类型 (0: 目录; 1: 页面; 2: 按钮)")
 	private Integer type;
 
 	@Schema(title = "菜单图标")
