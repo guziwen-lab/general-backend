@@ -8,6 +8,7 @@ import com.supermap.shiro.LoginUserContextHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ public class TestController {
 
     @Operation(summary = "分页查询")
     @PostMapping("/page")
+    @RequiresGuest
     public R<Page<TestEntity>> page(@RequestBody TestDTO dto) {
         Page<TestEntity> page = testService.queryPage(dto);
         return R.ok(page);

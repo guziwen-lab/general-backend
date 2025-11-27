@@ -36,7 +36,7 @@ public class ShiroConfig {
 
     private final static String CUSTOM_FILTER = "custom";
 
-    private final static Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+    public final static Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
 
     public ShiroConfig() {
         // 可以匿名访问的接口
@@ -53,6 +53,7 @@ public class ShiroConfig {
         // 登录
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/captcha", "anon");
+        filterChainDefinitionMap.put("/logout", "logout");
 
         // 其余接口通过redis过滤器
         filterChainDefinitionMap.put("/**", CUSTOM_FILTER);
