@@ -19,13 +19,13 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         Map<String, String> filterChainDefinitionMap = ShiroConfig.filterChainDefinitionMap;
-        InterceptorRegistration interceptorRegistration = registry.addInterceptor(redisTokenInterceptor);
+        InterceptorRegistration reg = registry.addInterceptor(redisTokenInterceptor);
 
         filterChainDefinitionMap.forEach((k, v) -> {
-            if (StringUtils.equalsAny(v, "anon", "logout")) {
-                interceptorRegistration.excludePathPatterns(k);
+            if (v.contains("anon") || v.contains("logout")) {
+                reg.excludePathPatterns(k);
             } else {
-                interceptorRegistration.addPathPatterns(k);
+                reg.addPathPatterns(k);
             }
         });
     }
