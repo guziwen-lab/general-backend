@@ -1,6 +1,5 @@
 package com.supermap.shiro.config;
 
-import com.supermap.common.util.StringUtils;
 import com.supermap.shiro.interceptor.RedisTokenInterceptor;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
