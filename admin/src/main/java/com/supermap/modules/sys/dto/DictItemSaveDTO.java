@@ -23,8 +23,7 @@ public class DictItemSaveDTO {
     @Schema(title = "字典id")
     private Long dictId;
 
-    @NotNull(groups = {Add.class})
-    @Schema(title = "上级字典项id，没有上级传0L")
+    @Schema(title = "上级字典项id")
     private Long parentId;
 
     @NotNull(groups = {Add.class})
