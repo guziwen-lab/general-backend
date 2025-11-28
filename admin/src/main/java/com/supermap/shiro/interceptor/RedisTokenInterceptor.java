@@ -27,7 +27,11 @@ public class RedisTokenInterceptor implements HandlerInterceptor {
     @SuppressWarnings("NullableProblems")
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (isRequiresGuest((HandlerMethod) handler)) {
+        if (!(handler instanceof HandlerMethod)) {
+            return true;
+        }
+
+        if (hasRequiresGuest((HandlerMethod) handler)) {
             return true;
         }
 
@@ -56,7 +60,7 @@ public class RedisTokenInterceptor implements HandlerInterceptor {
      * @param handler HandlerMethod
      * @return boolean
      */
-    private boolean isRequiresGuest(HandlerMethod handler) {
+    private boolean hasRequiresGuest(HandlerMethod handler) {
         boolean guestMethod = handler.hasMethodAnnotation(RequiresGuest.class);
         boolean guestClass = handler.getBeanType().isAnnotationPresent(RequiresGuest.class);
         return guestMethod || guestClass;
