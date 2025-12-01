@@ -7,6 +7,7 @@ import com.supermap.modules.sys.dto.DepartmentDTO;
 import com.supermap.modules.sys.dto.DepartmentSaveDTO;
 import com.supermap.modules.sys.vo.DepartmentVO;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,6 +28,8 @@ public interface DepartmentService extends IService<DepartmentEntity> {
     List<DepartmentVO> tree(Boolean isActive);
 
     List<DepartmentEntity> getByUserId(Long userId);
+
+    List<DepartmentEntity> getWithSubordinatesByCodes(Collection<String> codes);
 
 }
 

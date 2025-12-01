@@ -8,6 +8,7 @@ import com.supermap.modules.sys.vo.DepartmentVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,5 +26,7 @@ public interface DepartmentDao extends BaseMapper<DepartmentEntity> {
     void disableChildrenById(@Param("id") Long id);
 
     List<DepartmentEntity> getDepartmentByUserId(@Param("userId") Long userId);
+
+    List<DepartmentEntity> getWithSubordinatesByCodes(@Param("codes") Collection<String> codes);
 
 }

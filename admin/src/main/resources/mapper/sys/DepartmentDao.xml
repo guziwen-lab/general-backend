@@ -135,4 +135,20 @@
                  left join sys_user_department_relation r on d.id = r.department_id
         where r.user_id = #{userId}
     </select>
+
+    <select id="getWithSubordinatesByCodes" resultMap="departmentMap">
+        WITH RECURSIVE department AS (select *
+                                      from sys_department d
+        where d.code in
+        <foreach item="code" collection="codes" separator="," index="index" open="(" close=")">
+            #{code}
+        </foreach>
+        UNION ALL
+        SELECT child.*
+        FROM sys_department child
+                 JOIN department parent
+                      ON child.parent_id = parent.id)
+        SELECT *
+        FROM department
+    </select>
 </mapper>

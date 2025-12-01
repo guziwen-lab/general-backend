@@ -17,6 +17,7 @@ import com.supermap.modules.sys.dto.DepartmentSaveDTO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -90,6 +91,11 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentDao, Department
                 .toList();
         departmentVO.setChildren(children);
         children.forEach(i -> setChildren(i, all));
+    }
+
+    @Override
+    public List<DepartmentEntity> getWithSubordinatesByCodes(Collection<String> codes) {
+        return baseMapper.getWithSubordinatesByCodes(codes);
     }
 
 }
