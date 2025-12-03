@@ -5,6 +5,7 @@ import com.supermap.shiro.encoder.BCryptPasswordEncoder;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import com.supermap.shiro.filter.RedisTokenFilter;
 import jakarta.servlet.Filter;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
@@ -73,16 +74,18 @@ public class ShiroConfig {
 
     @Bean
     public DefaultWebSecurityManager defaultWebSecurityManager(Realm realm) {
-        DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager(realm);
-        defaultWebSecurityManager.setRealm(realm);
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager(realm);
+        securityManager.setRealm(realm);
 
         DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
         DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
         defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
         subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
-        defaultWebSecurityManager.setSubjectDAO(subjectDAO);
+        securityManager.setSubjectDAO(subjectDAO);
 
-        return defaultWebSecurityManager;
+        SecurityUtils.setSecurityManager(securityManager);
+
+        return securityManager;
     }
 
     @Bean
