@@ -24,34 +24,25 @@ public class AdministrativeDivisionCodeEntity {
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     @Schema(title = "主键")
     private Long id;
-    /**
-     * 行政区划代码
-     */
+
     @Schema(title = "行政区划代码")
     private String code;
-    /**
-     * 上级行政区划代码
-     */
+
     @Schema(title = "上级行政区划代码")
     private String pcode;
-    /**
-     * 行政区划名称
-     */
+
     @Schema(title = "行政区划名称")
     private String name;
-    /**
-     * 行政区划级别 (0: 国家; 1: 省; 2: 市; 3: 区县)
-     */
+
     @Schema(title = "行政区划级别 (0: 国家; 1: 省; 2: 市; 3: 区县)")
     private Integer level;
-    /**
-     * 创建时间
-     */
+
+    @Schema(title = "行政区划路径")
+    private Integer path;
+
     @Schema(title = "创建时间")
     private Date createTime;
-    /**
-     * 更新时间
-     */
+
     @Schema(title = "更新时间")
     private Date updateTime;
 
