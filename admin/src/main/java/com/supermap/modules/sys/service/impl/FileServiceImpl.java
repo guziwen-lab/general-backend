@@ -69,15 +69,15 @@ public class FileServiceImpl extends ServiceImpl<FileDao, FileEntity> implements
     public FileEntity upload(InputStream inputStream, String fileName) {
         FileEntity fileEntity = new FileEntity();
         String dest = getFilePath() + UUIDUtils.get() + "." + FileNameUtils.getSuffix(fileName);
-        File destFile = FileUtils.touch(dest);
+        File destFile = new File(dest);
         try (FileOutputStream outputStream = new FileOutputStream(dest)) {
-            IOUtils.copy(inputStream, outputStream);
+            long size = IOUtils.copy(inputStream, outputStream);
 
             fileEntity.setFileName(fileName);
             fileEntity.setFilePath(dest);
             String mimeType = detectMimeType(destFile);
             fileEntity.setFileType(mimeType);
-            fileEntity.setFileSize(destFile.length());
+            fileEntity.setFileSize(size);
             fileEntity.setStorageType("local");
             Timestamp now = new Timestamp(System.currentTimeMillis());
             fileEntity.setCreateTime(now);
