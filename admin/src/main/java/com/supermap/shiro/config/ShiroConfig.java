@@ -54,7 +54,6 @@ public class ShiroConfig {
         // 登录
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/captcha", "anon");
-        filterChainDefinitionMap.put("/logout", "logout");
 
         // 其余接口通过redis过滤器
         filterChainDefinitionMap.put("/**", CUSTOM_FILTER);

@@ -197,7 +197,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Override
     public void setLoginUserPermsInfo(LoginUser loginUser) {
-        Set<String> roleNames = roleService.getRoleNamesByUserId(loginUser.getUserId());
+        List<RoleEntity> roleEntities = roleService.getByUserId(loginUser.getUserId());
+        Set<String> roleNames = roleEntities.stream().map(RoleEntity::getRoleName).collect(Collectors.toSet());
+        loginUser.setRoleEntities(roleEntities);
         loginUser.setRoles(roleNames);
 
         Set<String> permissionNames = new HashSet<>();
@@ -226,11 +228,13 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             }
         }
 
+        loginUser.setPermissionEntities(permissionEntities);
         loginUser.setPermissionNames(permissionNames);
         loginUser.setStringPermissions(stringPermissions);
         loginUser.setObjectPermissions(objectPermissions);
 
         List<DepartmentEntity> departmentEntities = departmentService.getByUserId(loginUser.getUserId());
+        loginUser.setDepartmentEntities(departmentEntities);
         loginUser.setDepartments(departmentEntities.stream()
                 .map(DepartmentEntity::getCode)
                 .collect(Collectors.toSet()));
