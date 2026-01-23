@@ -1,10 +1,12 @@
 package com.supermap.config;
 
 import com.supermap.common.xss.XssFilter;
+import com.supermap.common.filter.TraceIdFilter;
 import jakarta.servlet.DispatcherType;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
 /**
@@ -14,6 +16,14 @@ import org.springframework.web.filter.DelegatingFilterProxy;
  */
 @Configuration
 public class FilterConfig {
+
+    @Bean
+    public FilterRegistrationBean<TraceIdFilter> traceIdFilter() {
+        FilterRegistrationBean<TraceIdFilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new TraceIdFilter());
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
 
     @Bean
     public FilterRegistrationBean<DelegatingFilterProxy> shiroFilterRegistration() {

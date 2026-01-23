@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(ThreadPoolProperties.class)
 public class ThreadPoolConfig {
 
-    @Bean
+    @Bean("generalExecutor")
     public ThreadPoolExecutor threadPoolExecutor(ThreadPoolProperties properties) {
         return new ThreadPoolExecutor(properties.getCorePoolSize(),
                 properties.getMaximumPoolSize(),

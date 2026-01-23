@@ -1,21 +1,28 @@
 package com.supermap.modules.log;
 
 import com.supermap.common.util.JSON;
-import com.supermap.common.pojo.R;
-import com.supermap.modules.log.entity.GlobalEntity;
-import com.supermap.modules.log.service.GlobalService;
+import com.supermap.modules.log.entity.AccessEntity;
+import com.supermap.modules.log.service.AccessService;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.MDC;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
+import java.util.Arrays;
 
 /**
  * 日志切面
@@ -28,13 +35,15 @@ import java.sql.Timestamp;
 @Slf4j
 public class LogAspect {
 
-    private final GlobalService globalService;
+    private static final int MAX_LENGTH = 2000;
 
-    public LogAspect(GlobalService globalService) {
-        this.globalService = globalService;
+    private final AccessService accessService;
+
+    public LogAspect(AccessService accessService) {
+        this.accessService = accessService;
     }
 
-    @Pointcut("@annotation(com.supermap.modules.log.Log) || execution(* com.supermap.modules.biz.controller..*(..))")
+    @Pointcut("@annotation(com.supermap.modules.log.Log)")
     public void pointCut() {
     }
 
@@ -42,52 +51,95 @@ public class LogAspect {
     @Around("pointCut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
-        final String methodName = signature.getName();
+        Method method = signature.getMethod();
+        String label = null;
+        Log accessLog = method.getAnnotation(Log.class);
+        if (accessLog != null)
+            label = accessLog.label();
+        final String methodName = method.getName();
         String className = signature.getDeclaringTypeName();
-        Object param = proceedingJoinPoint.getArgs()[0];
+
+        Object[] args = filterArgs(proceedingJoinPoint.getArgs());
+        String params = JSON.toJSONString(args);
+        params = limit(params);
 
         // 打印参数
         if (log.isDebugEnabled()) {
             String request = String.format("请求方法: %s.%s ---------------- 参数: %s",
                     className,
                     methodName,
-                    JSON.toJSONString(param));
+                    params);
             log.debug(request);
         }
         long begin = System.currentTimeMillis();
-        R result = null;
+        String resultStr = null;
         try {
-            result = (R) proceedingJoinPoint.proceed();
-            long take = System.currentTimeMillis() - begin;
-            log.debug("执行结束 ---------------- 返回值: {}, 耗时：{}", JSON.toJSONString(result), take);
-            persistLog(className, methodName, param, result, take);
+            Object result = proceedingJoinPoint.proceed();
+            if (result instanceof StreamingResponseBody) {
+                resultStr = "[stream]";
+            } else {
+                if (result != null) {
+                    try {
+                        resultStr = JSON.toJSONString(result);
+                    } catch (Exception ex) {
+                        resultStr = "[serialize-error]";
+                    }
+                }
+            }
+            resultStr = limit(resultStr);
+
+            long cost = System.currentTimeMillis() - begin;
+            log.debug("执行结束 ---------------- 返回值: {}, 耗时：{}", resultStr, cost);
+
+            persistLog(label, className, methodName, params, resultStr, cost);
             return result;
         } catch (Throwable e) {
             long take = System.currentTimeMillis() - begin;
-            persistLog(className, methodName, param, result, take, e.getLocalizedMessage(), JSON.toJSONString(e));
+            String stackTrace = ExceptionUtils.getStackTrace(e);
+            persistLog(label, className, methodName, params, resultStr, take, e.getLocalizedMessage(), stackTrace);
             throw e;
         }
     }
 
-    private void persistLog(String className, String methodName, Object param, Object result, long take) {
-        persistLog(className, methodName, param, result, take, null, null);
+    private Object[] filterArgs(Object[] args) {
+        return Arrays.stream(args)
+                .filter(arg ->
+                        !(arg instanceof HttpServletRequest) &&
+                                !(arg instanceof HttpServletResponse) &&
+                                !(arg instanceof MultipartFile))
+                .toArray();
     }
 
-    private void persistLog(String className, String methodName, Object param, Object result, long take,
-                            String errorMsg, String exception) {
-        LoginUser loginUser = LoginUserContextHandler.getLoginUser();
+    private String limit(String value) {
+        if (value == null) return null;
+        return value.length() > MAX_LENGTH
+                ? value.substring(0, MAX_LENGTH) + "..."
+                : value;
+    }
 
-        GlobalEntity globalEntity = new GlobalEntity();
-        globalEntity.setClassName(className);
-        globalEntity.setMethodName(methodName);
-        globalEntity.setParam(JSON.toJSONString(param));
-        globalEntity.setResult(JSON.toJSONString(result));
-        globalEntity.setTake(take);
-        globalEntity.setErrorMsg(errorMsg);
-        globalEntity.setException(exception);
-        globalEntity.setRequestUser(loginUser.getUserId());
-        globalEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        globalService.save(globalEntity);
+    private void persistLog(String label, String className, String methodName, String params, String resultStr,
+                            long take) {
+        persistLog(label, className, methodName, params, resultStr, take, null, null);
+    }
+
+    private void persistLog(String label, String className, String methodName, String params, String resultStr,
+                            long take, String errorMsg, String exception) {
+        AccessEntity accessEntity = new AccessEntity();
+        accessEntity.setTraceId(MDC.get("traceId"));
+        accessEntity.setLabel(label);
+        accessEntity.setClassName(className);
+        accessEntity.setMethodName(methodName);
+        accessEntity.setParams(params);
+        accessEntity.setResult(resultStr);
+        accessEntity.setCost(take);
+        accessEntity.setErrorMsg(errorMsg);
+        accessEntity.setException(exception);
+        LoginUser loginUser = LoginUserContextHandler.getLoginUser();
+        if (loginUser != null) {
+            accessEntity.setRequestUser(loginUser.getUserId());
+        }
+        accessEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        accessService.asyncSave(accessEntity);
     }
 
 }

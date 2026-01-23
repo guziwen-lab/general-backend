@@ -1,26 +1,36 @@
-package com.supermap.modules.log.entity;
+package com.supermap.modules.log.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.sql.Timestamp;
+import com.supermap.common.pojo.PageParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.sql.Timestamp;
 
 /**
  * 全局日志表
  *
  * @author gzw
  */
+@EqualsAndHashCode(callSuper = true)
 @Schema(title = "全局日志表")
 @Data
-@TableName("log_global")
-public class GlobalEntity {
+public class AccessDTO extends PageParam {
 
-	@TableId(value = "id", type = IdType.ASSIGN_ID)
+	@Schema(title = "开始时间")
+	private Timestamp startTime;
+
+	@Schema(title = "结束时间")
+	private Timestamp endTime;
+
 	@Schema(title = "主键")
 	private Long id;
+
+	@Schema(title = "链路追踪id")
+	private String traceId;
+
+	@Schema(title = "标签")
+	private String label;
 
 	@Schema(title = "类名")
 	private String className;
@@ -29,13 +39,13 @@ public class GlobalEntity {
 	private String methodName;
 
 	@Schema(title = "参数")
-	private String param;
+	private String params;
 
 	@Schema(title = "结果")
 	private String result;
 
 	@Schema(title = "耗时")
-	private Long take;
+	private Long cost;
 
 	@Schema(title = "错误信息")
 	private String errorMsg;
@@ -47,6 +57,6 @@ public class GlobalEntity {
 	private Long requestUser;
 
 	@Schema(title = "创建时间")
-	private Timestamp createTime;
+	private Timestamp createdAt;
 
 }

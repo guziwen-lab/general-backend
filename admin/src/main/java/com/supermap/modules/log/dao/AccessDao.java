@@ -1,7 +1,7 @@
 package com.supermap.modules.log.dao;
 
-import com.supermap.modules.log.entity.GlobalEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.supermap.modules.log.entity.AccessEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -10,6 +10,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @author gzw
  */
 @Mapper
-public interface GlobalDao extends BaseMapper<GlobalEntity> {
+public interface AccessDao extends BaseMapper<AccessEntity> {
 	
 }
