@@ -98,9 +98,9 @@ public class LogAspect {
             persistLog(label, className, methodName, params, resultStr, cost);
             return result;
         } catch (Throwable e) {
-            long take = System.currentTimeMillis() - begin;
+            long cost = System.currentTimeMillis() - begin;
             String stackTrace = ExceptionUtils.getStackTrace(e);
-            persistLog(label, className, methodName, params, resultStr, take, e.getLocalizedMessage(), stackTrace);
+            persistLog(label, className, methodName, params, resultStr, cost, e.getLocalizedMessage(), stackTrace);
             throw e;
         }
     }
