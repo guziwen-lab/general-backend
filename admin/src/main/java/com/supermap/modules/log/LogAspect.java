@@ -8,6 +8,7 @@ import com.supermap.shiro.LoginUserContextHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -47,17 +48,20 @@ public class LogAspect {
     public void pointCut() {
     }
 
-    @SuppressWarnings("rawtypes")
     @Around("pointCut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
         Method method = signature.getMethod();
-        String label = null;
-        Log accessLog = method.getAnnotation(Log.class);
-        if (accessLog != null)
-            label = accessLog.label();
-        final String methodName = method.getName();
+        String methodName = method.getName();
         String className = signature.getDeclaringTypeName();
+        Log accessLog = method.getAnnotation(Log.class);
+        String label = null;
+        if (accessLog != null)
+            label = StringUtils.isNotBlank(accessLog.value())
+                    ? accessLog.value()
+                    : StringUtils.isNotBlank(accessLog.label())
+                    ? accessLog.label()
+                    : null;
 
         Object[] args = filterArgs(proceedingJoinPoint.getArgs());
         String params = JSON.toJSONString(args);
