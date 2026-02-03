@@ -11,7 +11,7 @@ public class AuthenticationConstant {
 
     public static final Long DEFAULT_EXPIRE_SECONDS = 60 * 60 * 24 * 7L;
 
-    public static final String CAPTCHA_KEY_PREFIX = "sys:captcha:";
+    public static final String CAPTCHA_KEY_PREFIX = "captcha:";
 
     public static final Long DEFAULT_CAPTCHA_EXPIRE_SECONDS = 5 * 60L;
 

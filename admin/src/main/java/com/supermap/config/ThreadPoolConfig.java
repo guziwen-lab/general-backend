@@ -31,7 +31,6 @@ public class ThreadPoolConfig {
             }
         };
 
-
         return new ThreadPoolExecutor(properties.getCorePoolSize(),
                 properties.getMaximumPoolSize(),
                 properties.getKeepAliveTime(),

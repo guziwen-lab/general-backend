@@ -11,7 +11,7 @@ import com.supermap.modules.sys.service.impl.PermissionServiceImpl;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
 import com.supermap.shiro.token.RedisToken;
-import com.supermap.shiro.token.TokenUsernamePassword;
+import com.supermap.shiro.token.TokenUsernamePasswordDTO;
 import com.supermap.shiro.util.RedisTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -39,11 +39,11 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String login(UserLoginDTO user, HttpServletRequest request) {
-        TokenUsernamePassword tokenUsernamePassword = new TokenUsernamePassword()
+        TokenUsernamePasswordDTO tokenUsernamePasswordDTO = new TokenUsernamePasswordDTO()
                 .setUsername(user.getUsername())
                 .setPassword(user.getPassword());
 
-        LoginUser principal = doLogin(tokenUsernamePassword);
+        LoginUser principal = doLogin(tokenUsernamePasswordDTO);
 
         String token = RedisTokenUtils.createToken(principal);
 
@@ -110,10 +110,10 @@ public class LoginServiceImpl implements LoginService {
         children.forEach(item -> buildRoute(item, all));
     }
 
-    private LoginUser doLogin(TokenUsernamePassword tokenUsernamePassword) {
+    private LoginUser doLogin(TokenUsernamePasswordDTO tokenUsernamePasswordDTO) {
         LoginUser principal;
         try {
-            RedisToken token = new RedisToken(tokenUsernamePassword);
+            RedisToken token = new RedisToken(tokenUsernamePasswordDTO);
             SecurityUtils.getSubject().login(token);
             principal = (LoginUser) token.getPrincipal();
         } catch (IncorrectCredentialsException e) {

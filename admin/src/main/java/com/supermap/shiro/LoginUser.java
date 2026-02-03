@@ -27,7 +27,6 @@ public class LoginUser extends UserEntity implements AuthorizationInfo {
     @Getter
     private String token;
 
-    @Setter
     @Getter
     @JsonIgnore
     private String password;

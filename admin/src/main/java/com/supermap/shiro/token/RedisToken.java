@@ -13,17 +13,17 @@ public class RedisToken implements AuthenticationToken {
 
     private String password;
 
-    public RedisToken(TokenUsernamePassword tokenUsernamePassword) {
-        if (tokenUsernamePassword.getToken() != null)
-            this.loginUser = RedisTokenUtils.getLoginUser(tokenUsernamePassword.getToken());
+    public RedisToken(TokenUsernamePasswordDTO tokenUsernamePasswordDTO) {
+        if (tokenUsernamePasswordDTO.getToken() != null)
+            this.loginUser = RedisTokenUtils.getLoginUser(tokenUsernamePasswordDTO.getToken());
 
-        if (tokenUsernamePassword.getPassword() != null)
-            this.password = tokenUsernamePassword.getPassword();
+        if (tokenUsernamePasswordDTO.getPassword() != null)
+            this.password = tokenUsernamePasswordDTO.getPassword();
 
-        if (tokenUsernamePassword.getPassword() != null && loginUser == null) {
+        if (tokenUsernamePasswordDTO.getPassword() != null && loginUser == null) {
             loginUser = new LoginUser();
-            loginUser.setUsername(tokenUsernamePassword.getUsername());
-            loginUser.setPassword(tokenUsernamePassword.getPassword());
+            loginUser.setUsername(tokenUsernamePasswordDTO.getUsername());
+            loginUser.setPassword(tokenUsernamePasswordDTO.getPassword());
         }
     }
 

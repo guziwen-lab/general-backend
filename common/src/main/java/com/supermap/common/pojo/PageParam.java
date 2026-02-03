@@ -33,4 +33,8 @@ public class PageParam {
         return new Page<>(current, size);
     }
 
+    public PageParam getPageParam() {
+        return this;
+    }
+
 }

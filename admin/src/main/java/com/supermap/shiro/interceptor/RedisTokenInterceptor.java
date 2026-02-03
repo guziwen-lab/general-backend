@@ -5,7 +5,7 @@ import com.supermap.common.pojo.R;
 import com.supermap.common.util.ServletUtils;
 import com.supermap.common.util.StringUtils;
 import com.supermap.shiro.token.RedisToken;
-import com.supermap.shiro.token.TokenUsernamePassword;
+import com.supermap.shiro.token.TokenUsernamePasswordDTO;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -45,7 +45,7 @@ public class RedisTokenInterceptor implements HandlerInterceptor {
 
         try {
             // 交给 myRealm
-            SecurityUtils.getSubject().login(new RedisToken(new TokenUsernamePassword().setToken(token)));
+            SecurityUtils.getSubject().login(new RedisToken(new TokenUsernamePasswordDTO().setToken(token)));
             return true;
         } catch (Exception e) {
             log.debug("认证失败", e);
