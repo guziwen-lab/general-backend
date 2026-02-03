@@ -75,14 +75,11 @@ public class RedisRealm extends AuthorizingRealm {
 
             BeanUtils.copyProperties(userEntity, loginUser);
 
-            // 设置权限信息
-            getUserService().setLoginUserPermsInfo(loginUser);
-
             return new SimpleAuthenticationInfo(loginUser, userEntity.getPassword(), getName());
         } catch (AuthenticationException e) {
             throw e;
         } catch (Exception e) {
-            log.debug("认证失败", e);
+            log.debug("认证过程出现异常", e);
             throw new AuthenticationException("认证过程出现异常", e);
         }
     }

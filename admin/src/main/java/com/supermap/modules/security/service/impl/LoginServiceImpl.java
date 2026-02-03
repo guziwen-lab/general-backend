@@ -7,6 +7,7 @@ import com.supermap.modules.sys.dto.UserLoginDTO;
 import com.supermap.modules.sys.entity.LoginLogEntity;
 import com.supermap.modules.sys.entity.PermissionEntity;
 import com.supermap.modules.sys.service.LoginLogService;
+import com.supermap.modules.sys.service.UserService;
 import com.supermap.modules.sys.service.impl.PermissionServiceImpl;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,8 @@ public class LoginServiceImpl implements LoginService {
 
     private final LoginLogService loginLogService;
 
+    private final UserService userService;
+
     @Override
     public String login(UserLoginDTO user, HttpServletRequest request) {
         TokenUsernamePasswordDTO tokenUsernamePasswordDTO = new TokenUsernamePasswordDTO()
@@ -44,6 +48,9 @@ public class LoginServiceImpl implements LoginService {
                 .setPassword(user.getPassword());
 
         LoginUser principal = doLogin(tokenUsernamePasswordDTO);
+
+        // 设置权限信息
+        userService.setLoginUserPermsInfo(principal);
 
         String token = RedisTokenUtils.createToken(principal);
 
@@ -111,15 +118,15 @@ public class LoginServiceImpl implements LoginService {
     }
 
     private LoginUser doLogin(TokenUsernamePasswordDTO tokenUsernamePasswordDTO) {
-        LoginUser principal;
         try {
             RedisToken token = new RedisToken(tokenUsernamePasswordDTO);
             SecurityUtils.getSubject().login(token);
-            principal = (LoginUser) token.getPrincipal();
+            return (LoginUser) token.getPrincipal();
         } catch (IncorrectCredentialsException e) {
             throw new IncorrectCredentialsException("密码错误", e);
+        } catch (UnknownAccountException e) {
+            throw new UnknownAccountException("用户不存在", e);
         }
-        return principal;
     }
 
 }
