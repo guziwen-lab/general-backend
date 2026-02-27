@@ -9,8 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.authz.Permission;
 
 import java.util.Collection;
 import java.util.HashSet;

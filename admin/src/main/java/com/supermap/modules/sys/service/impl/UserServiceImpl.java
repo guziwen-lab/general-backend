@@ -17,8 +17,6 @@ import com.supermap.modules.sys.vo.UserVO;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import lombok.AllArgsConstructor;
-import org.apache.shiro.authz.Permission;
-import org.apache.shiro.authz.permission.WildcardPermission;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
