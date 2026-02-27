@@ -21,6 +21,7 @@ public enum BizCodeEnum {
     TO_MANY_REQUEST(10004, "请求流量过大"),
     UNAUTHORIZED(10005, "未认证"),
     CAPTCHA_ERROR(10006, "验证码错误"),
+    EXCESSIVE_ATTEMPTS(10007, "密码错误次数过多"),
 
     GEOSPATIAL_DATA_FAILED(20000, "空间数据校验失败"),
 

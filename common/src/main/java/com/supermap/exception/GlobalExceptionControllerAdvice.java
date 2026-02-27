@@ -3,6 +3,8 @@ package com.supermap.exception;
 import com.supermap.common.enumeration.BizCodeEnum;
 import com.supermap.common.pojo.R;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.validation.BindingResult;
@@ -34,6 +36,24 @@ public class GlobalExceptionControllerAdvice {
         if (log.isDebugEnabled())
             log.error("Validation failed for argument{}", errorMap);
         return R.error(BizCodeEnum.VALID_PARAM_EXCEPTION, errorMap);
+    }
+
+    /**
+     * 处理密码错误异常
+     *
+     * @param e {@link IncorrectCredentialsException IncorrectCredentialsException}
+     * @return R
+     */
+    @ExceptionHandler(IncorrectCredentialsException.class)
+    public R<Void> handleIncorrectCredentialsException(IncorrectCredentialsException e) {
+        log.error(e.getMessage(), e);
+        return R.error(BizCodeEnum.AUTHENTICATION_FAILED.getCode(), "密码错误");
+    }
+
+    @ExceptionHandler(ExcessiveAttemptsException.class)
+    public R<Void> handleExcessiveAttemptsException(ExcessiveAttemptsException e) {
+        log.error(e.getMessage(), e);
+        return R.error(BizCodeEnum.AUTHENTICATION_FAILED.getCode(), e.getLocalizedMessage());
     }
 
     /**

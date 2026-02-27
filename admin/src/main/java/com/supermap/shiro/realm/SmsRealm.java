@@ -58,7 +58,6 @@ public class SmsRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         try {
-            // TODO 短信登录
             String phone = (String) authenticationToken.getPrincipal();
             String inputCode = (String) authenticationToken.getCredentials();
 
