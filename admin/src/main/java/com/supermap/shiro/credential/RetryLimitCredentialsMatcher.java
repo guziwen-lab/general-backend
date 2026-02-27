@@ -1,11 +1,13 @@
 package com.supermap.shiro.credential;
 
 import com.supermap.common.constant.AuthenticationConstant;
+import com.supermap.modules.sys.service.UserService;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -15,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RetryLimitCredentialsMatcher extends DefaultCredentialsMatcher {
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectProvider<RedisTemplate<String, String>> redisTemplateProvider;
 
     @Value("${login.retry.max-retry-count:5}")
     private int maxRetryCount = 5;
@@ -23,28 +25,35 @@ public class RetryLimitCredentialsMatcher extends DefaultCredentialsMatcher {
     private static final long RETRY_EXPIRE_SECONDS = 1800;
 
     public RetryLimitCredentialsMatcher(PasswordEncoder passwordEncoder,
-                                        RedisTemplate<String, String> redisTemplate) {
+                                        ObjectProvider<RedisTemplate<String, String>> redisTemplateProvider) {
         super(passwordEncoder);
-        this.redisTemplate = redisTemplate;
+        this.redisTemplateProvider = redisTemplateProvider;
+    }
+
+    private RedisTemplate<String, String> getRedisTemplate() {
+        RedisTemplate<String, String> redisTemplate = redisTemplateProvider.getIfAvailable();
+        if (redisTemplate == null)
+            throw new IllegalStateException("UserService 未就绪");
+        return redisTemplate;
     }
 
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
-        LoginUser principal = (LoginUser) token.getPrincipal();
-        String key = AuthenticationConstant.LOGIN_RETRY_KEY_PREFIX + principal.getUserId();
+        String username = (String) token.getPrincipal();
+        String key = AuthenticationConstant.LOGIN_RETRY_KEY_PREFIX + username;
 
-        String retryStr = redisTemplate.opsForValue().get(key);
+        String retryStr = getRedisTemplate().opsForValue().get(key);
         int retryCount = retryStr == null ? 0 : Integer.parseInt(retryStr);
         if (retryCount >= maxRetryCount)
             throw new ExcessiveAttemptsException("账号已锁定，请30分钟后再试");
 
         boolean matches = super.doCredentialsMatch(token, info);
         if (matches) {
-            redisTemplate.delete(key);
+            getRedisTemplate().delete(key);
         } else {
-            Long val = redisTemplate.opsForValue().increment(key);
+            Long val = getRedisTemplate().opsForValue().increment(key);
             if (val != null && val == 1) {
-                redisTemplate.expire(key, RETRY_EXPIRE_SECONDS, TimeUnit.SECONDS);
+                getRedisTemplate().expire(key, RETRY_EXPIRE_SECONDS, TimeUnit.SECONDS);
             }
         }
         return matches;

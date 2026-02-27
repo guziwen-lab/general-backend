@@ -31,5 +31,7 @@ public interface LoginLogService extends IService<LoginLogEntity> {
 
     List<LoginLogEntity> getOnlineByRoleId(Long roleId);
 
+    void asyncSave(LoginLogEntity entity);
+
 }
 

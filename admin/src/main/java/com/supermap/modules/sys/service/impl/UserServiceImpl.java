@@ -140,6 +140,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             fileService.decreaseRefCount(user.getAvatar());
         }
 
+        // 修改用户信息后要清空用户登录失败次数
+        redisTemplate.delete(AuthenticationConstant.LOGIN_RETRY_KEY_PREFIX + user.getUsername());
+
         // 修改了用户信息要更新这个用户登录的信息
         loginUserService.refreshLoginUserInfoByUserId(dto.getUserId());
     }
@@ -216,7 +219,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 String permsKey = pe.getPermsKey().trim();
 
                 stringPermissions.add(permsKey);
-                // 使用 WildcardPermission；若 permsKey 格式不合法
+                // 使用 WildcardPermission；若 permsKey 格式不合法，则忽略
                 try {
                     objectPermissions.add(new WildcardPermission(permsKey));
                 } catch (Exception ignored) {
@@ -270,7 +273,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Override
     public void unlock(Long userId) {
-        redisTemplate.delete(AuthenticationConstant.LOGIN_RETRY_KEY_PREFIX + userId);
+        UserEntity userEntity = getById(userId);
+        if (userEntity == null)
+            throw new IllegalArgumentException("用户不存在");
+        redisTemplate.delete(AuthenticationConstant.LOGIN_RETRY_KEY_PREFIX + userEntity.getUsername());
     }
 
 }

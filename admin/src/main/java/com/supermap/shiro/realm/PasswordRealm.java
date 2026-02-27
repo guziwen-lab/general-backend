@@ -1,11 +1,11 @@
 package com.supermap.shiro.realm;
 
-import com.supermap.common.util.BeanUtils;
 import com.supermap.common.util.StringUtils;
 import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.service.UserService;
 import com.supermap.shiro.LoginUser;
-import com.supermap.shiro.token.RedisToken;
+import com.supermap.shiro.credential.RetryLimitCredentialsMatcher;
+import com.supermap.shiro.token.PasswordToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -20,9 +20,9 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class RedisRealm extends AuthorizingRealm {
+public class PasswordRealm extends AuthorizingRealm {
 
-    public static final String REALM_NAME = "redisRealm";
+    public static final String REALM_NAME = "usernamePasswordRealm";
 
     private final ObjectProvider<UserService> userProvider;
 
@@ -32,7 +32,7 @@ public class RedisRealm extends AuthorizingRealm {
      * @param userProvider       UserServiceProvider 防止过早注入一个没有被动态代理的UserService
      * @param credentialsMatcher 密码匹配器
      */
-    public RedisRealm(ObjectProvider<UserService> userProvider, CredentialsMatcher credentialsMatcher) {
+    public PasswordRealm(ObjectProvider<UserService> userProvider, RetryLimitCredentialsMatcher credentialsMatcher) {
         setCredentialsMatcher(credentialsMatcher);
         this.userProvider = userProvider;
     }
@@ -43,39 +43,29 @@ public class RedisRealm extends AuthorizingRealm {
         return svc;
     }
 
-
     @Override
     public String getName() {
         return REALM_NAME;
     }
 
-    /**
-     * 限定这个realm只能处理RedisToken
-     */
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token instanceof RedisToken;
+        return token instanceof PasswordToken;
     }
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         try {
-            LoginUser loginUser = (LoginUser) authenticationToken.getPrincipal();
-            if (StringUtils.isEmpty(loginUser.getPassword())) {
-                // 密码为空说明是通过token在请求其他接口。不是请求登录。
-                return new SimpleAuthenticationInfo(loginUser, authenticationToken.getCredentials(), getName());
-            }
+            String username = (String) authenticationToken.getPrincipal();
 
-            UserEntity userEntity = getUserService().getByUsername(loginUser.getUsername());
+            UserEntity userEntity = getUserService().getByUsername(username);
             if (userEntity == null)
-                throw new UnknownAccountException("用户不存在: " + loginUser.getUsername());
+                throw new UnknownAccountException("用户不存在: " + username);
 
             if (StringUtils.isEmpty(userEntity.getPassword()))
-                throw new AuthenticationException("用户未设置密码: " + loginUser.getUsername());
+                throw new AccountException("用户未设置密码: " + username);
 
-            BeanUtils.copyProperties(userEntity, loginUser);
-
-            return new SimpleAuthenticationInfo(loginUser, userEntity.getPassword(), getName());
+            return new SimpleAuthenticationInfo(username, userEntity.getPassword(), getName());
         } catch (AuthenticationException e) {
             throw e;
         } catch (Exception e) {

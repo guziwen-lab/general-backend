@@ -3,10 +3,11 @@ package com.supermap.shiro.config;
 import com.supermap.shiro.credential.DefaultCredentialsMatcher;
 import com.supermap.shiro.encoder.BCryptPasswordEncoder;
 import com.supermap.shiro.encoder.PasswordEncoder;
-import com.supermap.shiro.filter.RedisTokenFilter;
+import com.supermap.shiro.filter.TokenFilter;
 import com.supermap.shiro.pam.CustomModularRealmAuthenticator;
-import com.supermap.shiro.realm.RedisRealm;
+import com.supermap.shiro.realm.TokenRealm;
 import com.supermap.shiro.realm.SmsRealm;
+import com.supermap.shiro.realm.PasswordRealm;
 import jakarta.servlet.Filter;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
@@ -74,11 +75,12 @@ public class ShiroConfig {
     }
 
     @Bean
-    public DefaultWebSecurityManager defaultWebSecurityManager(RedisRealm redisRealm,
+    public DefaultWebSecurityManager defaultWebSecurityManager(PasswordRealm passwordRealm,
                                                                SmsRealm smsRealm,
+                                                               TokenRealm tokenRealm,
                                                                ModularRealmAuthenticator authenticator) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealms(List.of(redisRealm, smsRealm));
+        securityManager.setRealms(List.of(passwordRealm, smsRealm, tokenRealm));
         securityManager.setAuthenticator(authenticator);
 
         // 关闭 session
@@ -122,7 +124,7 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setLoginUrl("/login");
 
         Map<String, Filter> filters = new HashMap<>();
-        filters.put(CUSTOM_FILTER, new RedisTokenFilter());
+        filters.put(CUSTOM_FILTER, new TokenFilter());
         shiroFilterFactoryBean.setFilters(filters);
 
         Map<String, String> filterChainMap = shiroFilterChainDefinition.getFilterChainMap();

@@ -5,6 +5,7 @@ import com.supermap.common.constant.AuthenticationConstant;
 import com.supermap.common.util.StringUtils;
 import com.supermap.common.util.UUIDUtils;
 import com.supermap.shiro.LoginUser;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,23 +16,19 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author gzw
  */
+@AllArgsConstructor
 @Component
 public class RedisTokenUtils {
 
-    private static RedisTemplate<String, String> redisTemplate;
-
-    @Autowired
-    public void setRedisTemplate(RedisTemplate<String, String> redisTemplate) {
-        RedisTokenUtils.redisTemplate = redisTemplate;
-    }
+    private final RedisTemplate<String, String> redisTemplate;
 
     /**
      * 生成token
      */
-    public static String createToken(LoginUser user) {
+    public String createToken(LoginUser user) {
         String uuid = UUIDUtils.get();
         user.setToken(uuid);
-        BoundValueOperations<String, String> ops = redisTemplate.boundValueOps(RedisTokenUtils.getKey(uuid));
+        BoundValueOperations<String, String> ops = redisTemplate.boundValueOps(getKey(uuid));
         ops.set(JSON.toJSONString(user), AuthenticationConstant.DEFAULT_EXPIRE_SECONDS, TimeUnit.SECONDS);
         return uuid;
     }
@@ -39,15 +36,15 @@ public class RedisTokenUtils {
     /**
      * 更新token
      */
-    public static void refreshToken(LoginUser user) {
-        BoundValueOperations<String, String> ops = redisTemplate.boundValueOps(RedisTokenUtils.getKey(user.getToken()));
+    public void refreshToken(LoginUser user) {
+        BoundValueOperations<String, String> ops = redisTemplate.boundValueOps(getKey(user.getToken()));
         ops.set(JSON.toJSONString(user), AuthenticationConstant.DEFAULT_EXPIRE_SECONDS, TimeUnit.SECONDS);
     }
 
     /**
      * 根据token获取用户信息
      */
-    public static LoginUser getLoginUser(String token) {
+    public LoginUser getLoginUser(String token) {
         BoundValueOperations<String, String> ops = redisTemplate.boundValueOps(getKey(token));
         String userStr = ops.get();
 
@@ -63,7 +60,7 @@ public class RedisTokenUtils {
         return JSON.parseObject(userStr, LoginUser.class);
     }
 
-    public static String getKey(String token) {
+    public String getKey(String token) {
         return AuthenticationConstant.USER_KEY_PREFIX + token;
     }
 

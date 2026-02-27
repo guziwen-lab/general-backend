@@ -1,10 +1,9 @@
 package com.supermap.shiro.realm;
 
-import com.supermap.modules.sys.entity.UserEntity;
-import com.supermap.modules.sys.service.UserService;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.credential.AllowAllCredentialsMatcher;
-import com.supermap.shiro.token.SmsCodeToken;
+import com.supermap.shiro.token.RedisToken;
+import com.supermap.shiro.util.RedisTokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -18,29 +17,22 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class SmsRealm extends AuthorizingRealm {
+public class TokenRealm extends AuthorizingRealm {
 
-    public static final String REALM_NAME = "smsRealm";
+    public static final String REALM_NAME = "tokenRealm";
 
-    private final ObjectProvider<UserService> userProvider;
+    private final ObjectProvider<RedisTokenUtils> redisTokenUtilsProvider;
 
-    /**
-     * 构造函数
-     *
-     * @param userProvider       UserServiceProvider 防止过早注入一个没有被动态代理的UserService
-     */
-    public SmsRealm(ObjectProvider<UserService> userProvider, AllowAllCredentialsMatcher credentialsMatcher) {
+    public TokenRealm(ObjectProvider<RedisTokenUtils> redisTokenUtilsProvider, AllowAllCredentialsMatcher credentialsMatcher) {
         setCredentialsMatcher(credentialsMatcher);
-        setCachingEnabled(false);
-        setAuthorizationCachingEnabled(false);
-
-        this.userProvider = userProvider;
+        this.redisTokenUtilsProvider = redisTokenUtilsProvider;
     }
 
-    private UserService getUserService() {
-        UserService svc = userProvider.getIfAvailable();
-        if (svc == null) throw new IllegalStateException("UserService 未就绪");
-        return svc;
+    private RedisTokenUtils getRedisTokenUtils() {
+        RedisTokenUtils redisTokenUtils = redisTokenUtilsProvider.getIfAvailable();
+        if (redisTokenUtils == null)
+            throw new IllegalStateException("RedisTokenUtils 未就绪");
+        return redisTokenUtils;
     }
 
     @Override
@@ -53,23 +45,19 @@ public class SmsRealm extends AuthorizingRealm {
      */
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token instanceof SmsCodeToken;
+        return token instanceof RedisToken;
     }
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         try {
-            // TODO 短信登录
-            String phone = (String) authenticationToken.getPrincipal();
-            String inputCode = (String) authenticationToken.getCredentials();
-
-            UserEntity userEntity = getUserService().getByUsername(phone);
-            if (userEntity == null)
-                throw new UnknownAccountException("用户不存在: " + authenticationToken.getPrincipal());
-
-            // TODO 验证短信验证码 from redis
-
-            return new SimpleAuthenticationInfo(phone, null, getName());
+            String token = (String) authenticationToken.getPrincipal();
+            try {
+                LoginUser loginUser = getRedisTokenUtils().getLoginUser(token);
+                return new SimpleAuthenticationInfo(loginUser, token, getName());
+            } catch (Exception e) {
+                throw new ExpiredCredentialsException(e.getMessage());
+            }
         } catch (AuthenticationException e) {
             throw e;
         } catch (Exception e) {

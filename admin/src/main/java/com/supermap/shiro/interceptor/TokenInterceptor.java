@@ -5,13 +5,13 @@ import com.supermap.common.pojo.R;
 import com.supermap.common.util.ServletUtils;
 import com.supermap.common.util.StringUtils;
 import com.supermap.shiro.token.RedisToken;
-import com.supermap.shiro.token.TokenUsernamePasswordDTO;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresGuest;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -22,7 +22,7 @@ import org.springframework.web.util.WebUtils;
  */
 @Slf4j
 @Component
-public class RedisTokenInterceptor implements HandlerInterceptor {
+public class TokenInterceptor implements HandlerInterceptor {
 
     @SuppressWarnings("NullableProblems")
     @Override
@@ -44,8 +44,10 @@ public class RedisTokenInterceptor implements HandlerInterceptor {
         }
 
         try {
-            // 交给 myRealm
-            SecurityUtils.getSubject().login(new RedisToken(new TokenUsernamePasswordDTO().setToken(token)));
+            Subject subject = SecurityUtils.getSubject();
+            if (!subject.isAuthenticated()) {
+                subject.login(new RedisToken(token));
+            }
             return true;
         } catch (Exception e) {
             log.debug("认证失败", e);

@@ -1,24 +1,23 @@
 package com.supermap.modules.security.service.impl;
 
+import com.supermap.common.util.BeanUtils;
 import com.supermap.common.util.IpUtils;
 import com.supermap.modules.security.service.LoginService;
 import com.supermap.modules.security.vo.RouteVO;
 import com.supermap.modules.sys.dto.UserLoginDTO;
 import com.supermap.modules.sys.entity.LoginLogEntity;
 import com.supermap.modules.sys.entity.PermissionEntity;
+import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.service.LoginLogService;
 import com.supermap.modules.sys.service.UserService;
 import com.supermap.modules.sys.service.impl.PermissionServiceImpl;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
-import com.supermap.shiro.token.RedisToken;
-import com.supermap.shiro.token.TokenUsernamePasswordDTO;
+import com.supermap.shiro.token.PasswordToken;
 import com.supermap.shiro.util.RedisTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.UnknownAccountException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -41,35 +40,39 @@ public class LoginServiceImpl implements LoginService {
 
     private final UserService userService;
 
+    private final RedisTokenUtils redisTokenUtils;
+
     @Override
     public String login(UserLoginDTO user, HttpServletRequest request) {
-        TokenUsernamePasswordDTO tokenUsernamePasswordDTO = new TokenUsernamePasswordDTO()
-                .setUsername(user.getUsername())
-                .setPassword(user.getPassword());
+        PasswordToken passwordToken = new PasswordToken(user.getUsername(), user.getPassword());
+        SecurityUtils.getSubject().login(passwordToken);
 
-        LoginUser principal = doLogin(tokenUsernamePasswordDTO);
+        // 构造 LoginUser
+        LoginUser loginUser = new LoginUser();
+        UserEntity userEntity = userService.getByUsername(user.getUsername());
+        BeanUtils.copyProperties(userEntity, loginUser);
 
         // 设置权限信息
-        userService.setLoginUserPermsInfo(principal);
+        userService.setLoginUserPermsInfo(loginUser);
 
-        String token = RedisTokenUtils.createToken(principal);
+        String token = redisTokenUtils.createToken(loginUser);
 
         // 保存登录日志
         LoginLogEntity loginLogEntity = new LoginLogEntity();
         loginLogEntity.setToken(token);
-        loginLogEntity.setUserId(principal.getUserId());
+        loginLogEntity.setUserId(loginUser.getUserId());
         loginLogEntity.setLoginTime(new Timestamp(System.currentTimeMillis()));
         loginLogEntity.setIsForceLogout(false);
         String ip = IpUtils.getClientIp(request);
         loginLogEntity.setIp(ip);
-        loginLogService.save(loginLogEntity);
+        loginLogService.asyncSave(loginLogEntity);
 
         return token;
     }
 
     @Override
     public void logout(String token) {
-        redisTemplate.delete(RedisTokenUtils.getKey(token));
+        redisTemplate.delete(redisTokenUtils.getKey(token));
         LoginUserContextHandler.logout();
 
         LoginLogEntity loginLogEntity = loginLogService.getByToken(token);
@@ -115,18 +118,6 @@ public class LoginServiceImpl implements LoginService {
         root.setChildren(children);
 
         children.forEach(item -> buildRoute(item, all));
-    }
-
-    private LoginUser doLogin(TokenUsernamePasswordDTO tokenUsernamePasswordDTO) {
-        try {
-            RedisToken token = new RedisToken(tokenUsernamePasswordDTO);
-            SecurityUtils.getSubject().login(token);
-            return (LoginUser) token.getPrincipal();
-        } catch (IncorrectCredentialsException e) {
-            throw new IncorrectCredentialsException("密码错误", e);
-        } catch (UnknownAccountException e) {
-            throw new UnknownAccountException("用户不存在", e);
-        }
     }
 
 }

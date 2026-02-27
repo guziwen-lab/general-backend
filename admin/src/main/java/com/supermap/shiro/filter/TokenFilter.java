@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Slf4j
-public class RedisTokenFilter extends BasicHttpAuthenticationFilter {
+public class TokenFilter extends BasicHttpAuthenticationFilter {
 
     /**
      * 过滤器拦截请求的入口方法

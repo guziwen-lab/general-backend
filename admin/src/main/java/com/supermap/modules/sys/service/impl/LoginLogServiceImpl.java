@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.supermap.common.constant.AuthenticationConstant;
 import com.supermap.common.util.BeanUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -76,6 +77,16 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogDao, LoginLogEntity
     public List<LoginLogEntity> getOnlineByRoleId(Long roleId) {
         long l = System.currentTimeMillis() - AuthenticationConstant.DEFAULT_EXPIRE_SECONDS * 1000;
         return baseMapper.getOnlineByRoleId(roleId, new Timestamp(l));
+    }
+
+    @Async("logExecutor")
+    @Override
+    public void asyncSave(LoginLogEntity entity) {
+        try {
+            save(entity);
+        } catch (Exception e) {
+            log.error("保存访问日志失败", e);
+        }
     }
 
 }
