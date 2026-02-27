@@ -4,9 +4,13 @@ import com.supermap.shiro.credential.DefaultCredentialsMatcher;
 import com.supermap.shiro.encoder.BCryptPasswordEncoder;
 import com.supermap.shiro.encoder.PasswordEncoder;
 import com.supermap.shiro.filter.RedisTokenFilter;
+import com.supermap.shiro.pam.CustomModularRealmAuthenticator;
+import com.supermap.shiro.realm.RedisRealm;
+import com.supermap.shiro.realm.SmsRealm;
 import jakarta.servlet.Filter;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
+import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
@@ -23,9 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * shiro 配置类
@@ -72,19 +74,29 @@ public class ShiroConfig {
     }
 
     @Bean
-    public DefaultWebSecurityManager defaultWebSecurityManager(Realm realm) {
-        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager(realm);
-        securityManager.setRealm(realm);
+    public DefaultWebSecurityManager defaultWebSecurityManager(RedisRealm redisRealm,
+                                                               SmsRealm smsRealm,
+                                                               ModularRealmAuthenticator authenticator) {
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        securityManager.setRealms(List.of(redisRealm, smsRealm));
+        securityManager.setAuthenticator(authenticator);
 
+        // 关闭 session
         DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
-        DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
-        defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
-        subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
+        DefaultSessionStorageEvaluator evaluator = new DefaultSessionStorageEvaluator();
+        evaluator.setSessionStorageEnabled(false);
+        subjectDAO.setSessionStorageEvaluator(evaluator);
         securityManager.setSubjectDAO(subjectDAO);
 
-        SecurityUtils.setSecurityManager(securityManager);
-
         return securityManager;
+    }
+
+    @Bean
+    public ModularRealmAuthenticator authenticator(List<Realm> realms) {
+        CustomModularRealmAuthenticator authenticator = new CustomModularRealmAuthenticator();
+        authenticator.setAuthenticationStrategy(new FirstSuccessfulStrategy());
+        authenticator.setRealms(realms);
+        return authenticator;
     }
 
     @Bean

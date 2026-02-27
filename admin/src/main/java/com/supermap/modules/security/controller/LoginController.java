@@ -8,7 +8,6 @@ import com.supermap.modules.security.service.LoginService;
 import com.supermap.modules.security.vo.RouteVO;
 import com.supermap.modules.sys.dto.UserLoginDTO;
 import com.supermap.modules.sys.service.LoginUserService;
-import com.supermap.modules.sys.service.UserService;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,8 +30,6 @@ import java.util.List;
 public class LoginController {
 
     private final LoginService loginService;
-
-    private final UserService userService;
 
     private final LoginUserService loginUserService;
 

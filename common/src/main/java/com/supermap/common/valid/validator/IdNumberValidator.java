@@ -2,7 +2,7 @@ package com.supermap.common.valid.validator;
 
 import cn.hutool.core.util.IdcardUtil;
 import com.supermap.common.util.StringUtils;
-import com.supermap.common.valid.annotation.IdentityCode;
+import com.supermap.common.valid.annotation.IdNumber;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -11,7 +11,7 @@ import jakarta.validation.ConstraintValidatorContext;
  *
  * @author gzw
  */
-public class IdentityCodeValidator implements ConstraintValidator<IdentityCode, String> {
+public class IdNumberValidator implements ConstraintValidator<IdNumber, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
@@ -21,7 +21,7 @@ public class IdentityCodeValidator implements ConstraintValidator<IdentityCode, 
     }
 
     @Override
-    public void initialize(IdentityCode constraintAnnotation) {
+    public void initialize(IdNumber constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
