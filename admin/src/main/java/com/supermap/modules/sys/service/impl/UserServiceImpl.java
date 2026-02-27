@@ -207,7 +207,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
         Set<String> permissionNames = new HashSet<>();
         Set<String> stringPermissions = new HashSet<>();
-        Set<Permission> objectPermissions = new HashSet<>();
 
         Set<PermissionEntity> permissionEntities = permissionService.getByUserId(loginUser.getUserId());
         for (PermissionEntity pe : permissionEntities) {
@@ -219,11 +218,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 String permsKey = pe.getPermsKey().trim();
 
                 stringPermissions.add(permsKey);
-                // 使用 WildcardPermission；若 permsKey 格式不合法，则忽略
-                try {
-                    objectPermissions.add(new WildcardPermission(permsKey));
-                } catch (Exception ignored) {
-                }
             }
 
             if (type != null && type == MenuType.BUTTON) {
@@ -234,7 +228,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         loginUser.setPermissionEntities(permissionEntities);
         loginUser.setPermissionNames(permissionNames);
         loginUser.setStringPermissions(stringPermissions);
-        loginUser.setObjectPermissions(objectPermissions);
 
         List<DepartmentEntity> departmentEntities = departmentService.getByUserId(loginUser.getUserId());
         loginUser.setDepartmentEntities(departmentEntities);

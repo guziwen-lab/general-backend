@@ -19,56 +19,31 @@ import java.util.Set;
 /**
  * @author gzw
  */
+@Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class LoginUser extends UserEntity implements AuthorizationInfo {
+public class LoginUser extends UserEntity {
 
-    @Getter
     private String token;
 
-    @Getter
     @JsonIgnore
     private String password;
 
     private Set<String> stringPermissions = new HashSet<>();
 
-    @Getter
     private Set<String> permissionNames = new HashSet<>();
 
-    @Getter
     private Collection<PermissionEntity> permissionEntities = new HashSet<>();
-
-    @JsonIgnore
-    private Set<Permission> objectPermissions = new HashSet<>();
 
     private Set<String> roles = new HashSet<>();
 
-    @Getter
     private Collection<RoleEntity> roleEntities = new HashSet<>();
 
-    @Getter
     private Set<String> buttons = new HashSet<>();
 
-    @Getter
     private Set<String> departments = new HashSet<>();
 
-    @Getter
     private Collection<DepartmentEntity> departmentEntities = new HashSet<>();
-
-    @Override
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    @Override
-    public Set<String> getStringPermissions() {
-        return stringPermissions;
-    }
-
-    @Override
-    public Set<Permission> getObjectPermissions() {
-        return objectPermissions;
-    }
 
 }

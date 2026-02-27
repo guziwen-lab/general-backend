@@ -3,12 +3,10 @@ package com.supermap.shiro.realm;
 import com.supermap.common.util.StringUtils;
 import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.service.UserService;
-import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.credential.RetryLimitCredentialsMatcher;
 import com.supermap.shiro.token.PasswordToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
-import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -22,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PasswordRealm extends AuthorizingRealm {
 
-    public static final String REALM_NAME = "usernamePasswordRealm";
+    public static final String REALM_NAME = "passwordRealm";
 
     private final ObjectProvider<UserService> userProvider;
 
@@ -79,11 +77,7 @@ public class PasswordRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        try {
-            return (LoginUser) principalCollection.getPrimaryPrincipal();
-        } catch (Exception e) {
-            return null;
-        }
+        return null;
     }
 
 }

@@ -2,7 +2,6 @@ package com.supermap.shiro.realm;
 
 import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.service.UserService;
-import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.credential.AllowAllCredentialsMatcher;
 import com.supermap.shiro.token.SmsCodeToken;
 import lombok.extern.slf4j.Slf4j;
@@ -83,11 +82,7 @@ public class SmsRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        try {
-            return (LoginUser) principalCollection.getPrimaryPrincipal();
-        } catch (Exception e) {
-            return null;
-        }
+        return null;
     }
 
 }
