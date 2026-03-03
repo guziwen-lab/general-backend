@@ -139,10 +139,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         }
 
         // 修改用户信息后要清空用户登录失败次数
-        redisTemplate.delete(AuthenticationConstant.LOGIN_RETRY_KEY_PREFIX + user.getUsername());
+        clearLoginRetryInfo(user.getUsername());
 
         // 修改了用户信息要更新这个用户登录的信息
         loginUserService.refreshLoginUserInfoByUserId(dto.getUserId());
+    }
+
+    private void clearLoginRetryInfo(String username) {
+        redisTemplate.delete(AuthenticationConstant.LOGIN_RETRY_KEY_PREFIX + username);
     }
 
     private void saveRoleByUserId(Long userId, List<Long> roleIds) {
@@ -267,7 +271,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         UserEntity userEntity = getById(userId);
         if (userEntity == null)
             throw new IllegalArgumentException("用户不存在");
-        redisTemplate.delete(AuthenticationConstant.LOGIN_RETRY_KEY_PREFIX + userEntity.getUsername());
+        clearLoginRetryInfo(userEntity.getUsername());
     }
 
 }
