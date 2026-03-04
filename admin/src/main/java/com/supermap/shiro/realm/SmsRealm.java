@@ -10,6 +10,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,23 +24,34 @@ public class SmsRealm extends AuthorizingRealm {
 
     private final ObjectProvider<UserService> userProvider;
 
+    private final ObjectProvider<RedisTemplate<String, String>> redisTemplateProvider;
+
     /**
      * 构造函数
      *
      * @param userProvider       UserServiceProvider 防止过早注入一个没有被动态代理的UserService
      */
-    public SmsRealm(ObjectProvider<UserService> userProvider, AllowAllCredentialsMatcher credentialsMatcher) {
+    public SmsRealm(ObjectProvider<UserService> userProvider,
+                    ObjectProvider<RedisTemplate<String, String>> redisTemplateProvider,
+                    AllowAllCredentialsMatcher credentialsMatcher) {
         setCredentialsMatcher(credentialsMatcher);
         setCachingEnabled(false);
         setAuthorizationCachingEnabled(false);
 
         this.userProvider = userProvider;
+        this.redisTemplateProvider = redisTemplateProvider;
     }
 
     private UserService getUserService() {
         UserService svc = userProvider.getIfAvailable();
         if (svc == null) throw new IllegalStateException("UserService 未就绪");
         return svc;
+    }
+
+    private RedisTemplate<String, String> getRedisTemplate() {
+        RedisTemplate<String, String> template = redisTemplateProvider.getIfAvailable();
+        if (template == null) throw new IllegalStateException("RedisTemplate 未就绪");
+        return template;
     }
 
     @Override
