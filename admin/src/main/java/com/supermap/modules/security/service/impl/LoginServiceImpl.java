@@ -48,12 +48,7 @@ public class LoginServiceImpl implements LoginService {
         SecurityUtils.getSubject().login(passwordToken);
 
         // 构造 LoginUser
-        LoginUser loginUser = new LoginUser();
-        UserEntity userEntity = userService.getByUsername(user.getUsername());
-        BeanUtils.copyProperties(userEntity, loginUser);
-
-        // 设置权限信息
-        userService.setLoginUserPermsInfo(loginUser);
+        LoginUser loginUser = buildLoginUser(user.getUsername());
 
         String token = redisTokenUtils.createToken(loginUser);
 
@@ -68,6 +63,20 @@ public class LoginServiceImpl implements LoginService {
         loginLogService.asyncSave(loginLogEntity);
 
         return token;
+    }
+
+    /**
+     * 构造 LoginUser
+     */
+    private LoginUser buildLoginUser(String username) {
+        LoginUser loginUser = new LoginUser();
+        UserEntity userEntity = userService.getByUsername(username);
+        BeanUtils.copyProperties(userEntity, loginUser);
+
+        // 设置权限信息
+        userService.setLoginUserPermsInfo(loginUser);
+
+        return loginUser;
     }
 
     @Override
