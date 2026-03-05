@@ -1,4 +1,4 @@
-package com.supermap.common.constant;
+package com.supermap.constant;
 
 /**
  * @author gzw

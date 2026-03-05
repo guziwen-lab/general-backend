@@ -1,4 +1,4 @@
-package com.supermap.common.constant;
+package com.supermap.constant;
 
 /**
  * 菜单类型 (0: 目录; 1: 页面; 2: 按钮)

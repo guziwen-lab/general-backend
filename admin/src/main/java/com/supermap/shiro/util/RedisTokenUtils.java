@@ -1,12 +1,11 @@
 package com.supermap.shiro.util;
 
 import com.supermap.common.util.JSON;
-import com.supermap.common.constant.AuthenticationConstant;
+import com.supermap.constant.AuthenticationConstant;
 import com.supermap.common.util.StringUtils;
 import com.supermap.common.util.UUIDUtils;
 import com.supermap.shiro.LoginUser;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
