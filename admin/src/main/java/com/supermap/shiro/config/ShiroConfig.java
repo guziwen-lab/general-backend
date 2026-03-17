@@ -15,6 +15,7 @@ import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -77,12 +78,10 @@ public class ShiroConfig {
     }
 
     @Bean
-    public DefaultWebSecurityManager defaultWebSecurityManager(UsernamePasswordRealm usernamePasswordRealm,
-                                                               SmsRealm smsRealm,
-                                                               TokenRealm tokenRealm,
+    public DefaultWebSecurityManager defaultWebSecurityManager(Collection<Realm> realms,
                                                                ModularRealmAuthenticator authenticator) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealms(List.of(usernamePasswordRealm, smsRealm, tokenRealm));
+        securityManager.setRealms(realms);
         securityManager.setAuthenticator(authenticator);
 
         // 关闭 session
