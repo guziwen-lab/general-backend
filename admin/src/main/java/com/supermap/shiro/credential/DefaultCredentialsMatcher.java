@@ -33,7 +33,6 @@ public class DefaultCredentialsMatcher extends SimpleCredentialsMatcher {
         }
         String storedHash = accountCredentials.toString();
 
-        // 使用 Spring 的 PasswordEncoder 比对
         return passwordEncoder.matches(plainPassword, storedHash);
     }
 

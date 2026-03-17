@@ -2,7 +2,6 @@ package com.supermap.shiro.encoder;
 
 /**
  * 密码加密器
- * 默认使用 BCrypt 加密
  *
  * @author gzw
  */
