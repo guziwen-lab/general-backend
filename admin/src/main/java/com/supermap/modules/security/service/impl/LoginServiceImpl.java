@@ -13,11 +13,11 @@ import com.supermap.modules.sys.service.UserService;
 import com.supermap.modules.sys.service.impl.PermissionServiceImpl;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
-import com.supermap.shiro.token.PasswordToken;
 import com.supermap.shiro.util.RedisTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -44,8 +44,8 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String login(UserLoginDTO user, HttpServletRequest request) {
-        PasswordToken passwordToken = new PasswordToken(user.getUsername(), user.getPassword());
-        SecurityUtils.getSubject().login(passwordToken);
+        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(user.getUsername(), user.getPassword());
+        SecurityUtils.getSubject().login(usernamePasswordToken);
 
         // 构造 LoginUser
         LoginUser loginUser = buildLoginUser(user.getUsername());

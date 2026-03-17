@@ -4,7 +4,6 @@ import com.supermap.common.util.StringUtils;
 import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.service.UserService;
 import com.supermap.shiro.credential.RetryLimitCredentialsMatcher;
-import com.supermap.shiro.token.PasswordToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -18,9 +17,9 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class PasswordRealm extends AuthorizingRealm {
+public class UsernamePasswordRealm extends AuthorizingRealm {
 
-    public static final String REALM_NAME = "passwordRealm";
+    public static final String REALM_NAME = "usernamePasswordRealm";
 
     private final ObjectProvider<UserService> userProvider;
 
@@ -30,7 +29,7 @@ public class PasswordRealm extends AuthorizingRealm {
      * @param userProvider       UserServiceProvider 防止过早注入一个没有被动态代理的UserService
      * @param credentialsMatcher 密码匹配器
      */
-    public PasswordRealm(ObjectProvider<UserService> userProvider, RetryLimitCredentialsMatcher credentialsMatcher) {
+    public UsernamePasswordRealm(ObjectProvider<UserService> userProvider, RetryLimitCredentialsMatcher credentialsMatcher) {
         setCredentialsMatcher(credentialsMatcher);
         this.userProvider = userProvider;
     }
@@ -48,7 +47,7 @@ public class PasswordRealm extends AuthorizingRealm {
 
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token instanceof PasswordToken;
+        return token instanceof UsernamePasswordToken;
     }
 
     @Override

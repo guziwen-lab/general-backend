@@ -7,7 +7,7 @@ import com.supermap.shiro.filter.TokenFilter;
 import com.supermap.shiro.pam.CustomModularRealmAuthenticator;
 import com.supermap.shiro.realm.TokenRealm;
 import com.supermap.shiro.realm.SmsRealm;
-import com.supermap.shiro.realm.PasswordRealm;
+import com.supermap.shiro.realm.UsernamePasswordRealm;
 import jakarta.servlet.Filter;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
@@ -77,12 +77,12 @@ public class ShiroConfig {
     }
 
     @Bean
-    public DefaultWebSecurityManager defaultWebSecurityManager(PasswordRealm passwordRealm,
+    public DefaultWebSecurityManager defaultWebSecurityManager(UsernamePasswordRealm usernamePasswordRealm,
                                                                SmsRealm smsRealm,
                                                                TokenRealm tokenRealm,
                                                                ModularRealmAuthenticator authenticator) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealms(List.of(passwordRealm, smsRealm, tokenRealm));
+        securityManager.setRealms(List.of(usernamePasswordRealm, smsRealm, tokenRealm));
         securityManager.setAuthenticator(authenticator);
 
         // 关闭 session
