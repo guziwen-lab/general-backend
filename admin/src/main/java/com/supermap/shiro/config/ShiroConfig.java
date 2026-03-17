@@ -91,7 +91,7 @@ public class ShiroConfig {
     }
 
     @Bean
-    public ModularRealmAuthenticator authenticator(List<Realm> realms) {
+    public ModularRealmAuthenticator authenticator(Collection<Realm> realms) {
         CustomModularRealmAuthenticator authenticator = new CustomModularRealmAuthenticator();
         authenticator.setAuthenticationStrategy(new FirstSuccessfulStrategy());
         authenticator.setRealms(realms);
