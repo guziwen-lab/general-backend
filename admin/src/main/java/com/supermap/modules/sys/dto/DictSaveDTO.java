@@ -24,7 +24,6 @@ public class DictSaveDTO {
     @Schema(title = "字典名称")
     private String name;
 
-    @NotBlank(groups = Add.class)
     @Schema(title = "字典描述")
     private String description;
 
