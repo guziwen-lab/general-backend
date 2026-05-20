@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,6 +91,13 @@ public class GlobalExceptionControllerAdvice {
     public R<Throwable> handleException(Throwable throwable) {
         log.error(throwable.getMessage(), throwable);
         return R.error(BizCodeEnum.UNKNOWN_EXCEPTION.getCode(), throwable.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(UndeclaredThrowableException.class)
+    public R<Throwable> handleUndeclaredThrowableException(UndeclaredThrowableException e) {
+        Throwable cause = e.getUndeclaredThrowable();
+        log.error(cause.getMessage(), cause);
+        return R.error(BizCodeEnum.UNKNOWN_EXCEPTION.getCode(), cause.getLocalizedMessage());
     }
 
 }
