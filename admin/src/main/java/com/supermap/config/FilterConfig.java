@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
+import java.util.EnumSet;
+
 /**
  * Filter配置
  *
@@ -34,6 +36,10 @@ public class FilterConfig {
         registration.setEnabled(true);
         registration.setOrder(Integer.MAX_VALUE - 1);
         registration.addUrlPatterns("/*");
+        registration.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST,
+                DispatcherType.FORWARD,
+                DispatcherType.ERROR,
+                DispatcherType.ASYNC));
         return registration;
     }
 
