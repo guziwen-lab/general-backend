@@ -59,6 +59,13 @@ public class RedisTokenUtils {
         return JSON.parseObject(userStr, LoginUser.class);
     }
 
+    /**
+     * 移除token
+     */
+    public void removeToken(String token) {
+        redisTemplate.delete(getKey(token));
+    }
+
     public String getKey(String token) {
         return AuthenticationConstant.USER_KEY_PREFIX + token;
     }

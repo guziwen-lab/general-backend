@@ -53,7 +53,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public void logout(String token) {
-        redisTemplate.delete(redisTokenUtils.getKey(token));
+        redisTokenUtils.removeToken(token);
         LoginUserContextHandler.logout();
 
         LoginLogEntity loginLogEntity = loginLogService.getByToken(token);
