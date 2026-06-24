@@ -1,15 +1,12 @@
 package com.supermap.modules.security.service.impl;
 
-import com.supermap.common.util.BeanUtils;
 import com.supermap.common.util.IpUtils;
 import com.supermap.modules.security.service.LoginService;
 import com.supermap.modules.security.vo.RouteVO;
 import com.supermap.modules.sys.dto.UserLoginDTO;
 import com.supermap.modules.sys.entity.LoginLogEntity;
 import com.supermap.modules.sys.entity.PermissionEntity;
-import com.supermap.modules.sys.entity.UserEntity;
 import com.supermap.modules.sys.service.LoginLogService;
-import com.supermap.modules.sys.service.UserService;
 import com.supermap.modules.sys.service.impl.PermissionServiceImpl;
 import com.supermap.shiro.LoginUser;
 import com.supermap.shiro.LoginUserContextHandler;
@@ -38,45 +35,20 @@ public class LoginServiceImpl implements LoginService {
 
     private final LoginLogService loginLogService;
 
-    private final UserService userService;
-
     private final RedisTokenUtils redisTokenUtils;
 
     @Override
     public String login(UserLoginDTO user, HttpServletRequest request) {
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(user.getUsername(), user.getPassword());
         SecurityUtils.getSubject().login(usernamePasswordToken);
-
-        // 构造 LoginUser
-        LoginUser loginUser = buildLoginUser(user.getUsername());
+        LoginUser loginUser = LoginUserContextHandler.getLoginUser();
 
         String token = redisTokenUtils.createToken(loginUser);
 
         // 保存登录日志
-        LoginLogEntity loginLogEntity = new LoginLogEntity();
-        loginLogEntity.setToken(token);
-        loginLogEntity.setUserId(loginUser.getUserId());
-        loginLogEntity.setLoginTime(new Timestamp(System.currentTimeMillis()));
-        loginLogEntity.setIsForceLogout(false);
-        String ip = IpUtils.getClientIp(request);
-        loginLogEntity.setIp(ip);
-        loginLogService.asyncSave(loginLogEntity);
+        saveLoginLog(request, token, loginUser);
 
         return token;
-    }
-
-    /**
-     * 构造 LoginUser
-     */
-    private LoginUser buildLoginUser(String username) {
-        LoginUser loginUser = new LoginUser();
-        UserEntity userEntity = userService.getByUsername(username);
-        BeanUtils.copyProperties(userEntity, loginUser);
-
-        // 设置权限信息
-        userService.setLoginUserPermsInfo(loginUser);
-
-        return loginUser;
     }
 
     @Override
@@ -127,6 +99,17 @@ public class LoginServiceImpl implements LoginService {
         root.setChildren(children);
 
         children.forEach(item -> buildRoute(item, all));
+    }
+
+    private void saveLoginLog(HttpServletRequest request, String token, LoginUser loginUser) {
+        LoginLogEntity loginLogEntity = new LoginLogEntity();
+        loginLogEntity.setToken(token);
+        loginLogEntity.setUserId(loginUser.getUserId());
+        loginLogEntity.setLoginTime(new Timestamp(System.currentTimeMillis()));
+        loginLogEntity.setIsForceLogout(false);
+        String ip = IpUtils.getClientIp(request);
+        loginLogEntity.setIp(ip);
+        loginLogService.asyncSave(loginLogEntity);
     }
 
 }
